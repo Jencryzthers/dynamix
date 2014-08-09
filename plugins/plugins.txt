@@ -1,5 +1,5 @@
 [dynamix.webGui]
-version="2.2.4"
+version="2.2.5"
 description="Dynamic graphical interface for unRAID media server"
 author="Bergware"
 reboot="y"
@@ -48,14 +48,14 @@ reboot="y"
 refresh="n"
 url="/Settings/SleepSettings"
 [dynamix.system.info]
-version="2.1.1"
+version="2.1.2"
 description="Get detailed hardware information about your system"
 author="Bergware"
 reboot="n"
 refresh="n"
 url="/Utils/SystemProfiler"
 [dynamix.system.stats]
-version="2.1.2"
+version="2.1.3"
 description="Maintain statistics about your drives and system"
 author="Bergware"
 reboot="n"

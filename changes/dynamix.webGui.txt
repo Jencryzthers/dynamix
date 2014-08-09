@@ -1,3 +1,10 @@
+Release notes v2.2.5
+====================
+Fixed: wrong average speed calculation of parity check when longer than 1 day
+Fixed: system information
+Changed: compressed display of CPU core speeds in dashboard
+
+
 Release notes v2.2.4
 ====================
 Added: check validity of newly created user name

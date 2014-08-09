@@ -1,3 +1,7 @@
+Release notes v2.1.2
+====================
+Fixed: system information
+
 Release notes v2.1.1
 ====================
 Changed: css coding
