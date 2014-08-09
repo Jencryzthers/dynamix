@@ -11,7 +11,7 @@ $plugin = 'dynamix.active.streams';
 ?>
 <script>
 function streamList() {
-  $('#streams').load('/plugins/dynamix/include/StreamList.php',"plugin=<?=$plugin?>",function(){setTimeout(streamList,1000);});
+  $('#streams').load('/plugins/dynamix/include/StreamList.php',"plugin=<?=$plugin?>&zone=<?=$var['timeZone']?>",function(){setTimeout(streamList,1000);});
 }
 
 $(function() {

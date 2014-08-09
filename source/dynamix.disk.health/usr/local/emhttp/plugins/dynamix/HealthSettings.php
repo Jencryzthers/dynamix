@@ -8,7 +8,7 @@
 ?>
 <?
 $plugin = 'dynamix.disk.health';
-$ini = parse_ini_file("boot/config/plugins/dynamix/$plugin.cfg");
+$cfg = parse_ini_file("boot/config/plugins/dynamix/$plugin.cfg");
 ?>
 <script>
 function resetHealth(form) {
@@ -21,8 +21,8 @@ function resetHealth(form) {
   <tr>
   <td>Enable background polling for spun-down disks:</td>
   <td><select name="poll" size="1">
-<?=mk_option($ini['poll'], "0", "No")?>
-<?=mk_option($ini['poll'], "1", "Yes")?>
+<?=mk_option($cfg['poll'], "0", "No")?>
+<?=mk_option($cfg['poll'], "1", "Yes")?>
   </select></td>
   </tr>
   <tr>

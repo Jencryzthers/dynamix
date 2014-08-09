@@ -67,6 +67,19 @@ function presetSpace(shareFloor) {
 
 // Fool unRAID by simulating the original input fields
 function prepareEdit(form) {
+// Test share name validity
+  var share = form.shareName.value;
+  if (!share) {
+    alert('Please enter a share name');
+    return false;
+  }
+  if (share.match('^disk[0-9]+$')) {
+    alert('Invalid share name specified\nDo not use reserved names.');
+    return false;
+  }
+  if (share.match(' ')) {
+    alert('Warning: using spaces in the share name may give unpredictable results.');
+  }
 // Adjust minimum free space value to selected unit
   var unit = 'KB,MB,GB,TB,PB';
   var scale = form.shareFloor.value;
@@ -107,10 +120,12 @@ function prepareEdit(form) {
   item = form.shareExclude.options[0];
   item.value = exclude;
   item.selected = true;
+
+  return true;
 }
 </script>
 
-<form name="share_edit" method="POST" action="/update.htm" target="progressFrame" onsubmit="prepareEdit(this)">
+<form name="share_edit" method="POST" action="/update.htm" target="progressFrame" onsubmit="return prepareEdit(this)">
 <input type="hidden" name="shareNameOrig" value="<?=$share['nameOrig']?>">
 <table class="settings">
   <tr>

@@ -28,6 +28,23 @@ function my_key() {
   $keyfile = exec("find /boot/config -name '*.key'");
   return strlen($keyfile) ? my_time(filemtime($keyfile)) : "";
 }
+function my_usage() {
+  global $disks,$var;
+  $arraysize=0;
+  $arrayfree=0;
+  foreach ($disks as $disk) {
+    if (strpos($disk['name'],'disk')!==false) {
+      $arraysize += $disk['sizeSb'];
+      $arrayfree += $disk['fsFree'];
+    }
+  }
+  if ($var['fsNumMounted']>0) {
+    $usage = $arraysize ? 100-round(100*$arrayfree/$arraysize) : 0;
+    echo "<div class='usage-bar'><span style='width:{$usage}%'><span>{$usage}%</span></span></div>";
+  } else {
+    echo "<div class='usage-bar'><span><center>".($var['fsState']=='Started'?'Maintenance':'off-line')."</center></span></div>";
+  }
+}
 function urlencode_path($path) {
   return str_replace("%2F", "/", urlencode($path));
 }
@@ -94,10 +111,13 @@ $shares  = parse_ini_file("state/shares.ini",true);
 $sec_nfs = parse_ini_file("state/sec_nfs.ini",true);
 $sec_afp = parse_ini_file("state/sec_afp.ini",true);
 
-// Dynamix additions
+// Dynamix settings
 $dynamix = parse_ini_file("boot/config/plugins/dynamix/dynamix.webGui.cfg",true);
-$confirm = &$dynamix['confirm'];
-$display = &$dynamix['display'];
+extract($dynamix);
+unset($dynamix);
+
+// Set local timezone
+date_default_timezone_set($var['timeZone']);
 
 // Build the pages
 $page_array = array();
@@ -134,13 +154,14 @@ $myPage = $page_array[basename($path)];
 <head>
 <title><?=$var['NAME']?>/<?=$myPage['Name']?></title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="MSThemeCompatible" content="no">
 <link type="text/css" rel="stylesheet" href="/plugins/webGui/fonts/dynamix.css">
-<link type="text/css" rel="stylesheet" href="/plugins/webGui/styles/template.css">
-<link type="text/css" rel="stylesheet" href="/plugins/webGui/styles/dynamix.css">
+<link type="text/css" rel="stylesheet" href="/plugins/webGui/styles/template-<?=$display['theme']?>.css">
+<link type="text/css" rel="stylesheet" href="/plugins/webGui/styles/dynamix-<?=$display['theme']?>.css">
 <link type="image/gif" rel="shortcut icon" href="/plugins/webGui/images/<?=$var['mdColor']?>.png">
 
 <?if (!$display['icons']):?>
-<style>.tab [type=radio]+label img.icon {display:none;}</style>
+<style>.tab [type=radio]+label img.icon {display:none;} #title img.icon {display:none;}</style>
 <?endif;?>
 
 <script type="text/javascript" src="/plugins/webGui/scripts/dynamix.js"></script>
@@ -174,25 +195,41 @@ function updateTime() {
   setTimeout(updateTime,period*1000);
 }
 function disableInput() {
-  for (var i=0,input; input=top.document.getElementsByTagName('input')[i]; i++) { input.disabled = true; }
-  for (var i=0,button; button=top.document.getElementsByTagName('button')[i]; i++) { button.disabled = true; }
-  for (var i=0,select; select=top.document.getElementsByTagName('select')[i]; i++) { select.disabled = true; }
-  for (var i=0,link; link=top.document.getElementsByTagName('a')[i]; i++) { link.style.color = "gray"; } //fake disable
+  for (var i=0,input; input=document.getElementsByTagName('input')[i]; i++) { input.disabled = true; }
+  for (var i=0,button; button=document.getElementsByTagName('button')[i]; i++) { button.disabled = true; }
+  for (var i=0,select; select=document.getElementsByTagName('select')[i]; i++) { select.disabled = true; }
+  for (var i=0,link; link=document.getElementsByTagName('a')[i]; i++) { link.style.color = "gray"; } //fake disable
 }
 function enableInput() {
-  for (var i=0,input; input=top.document.getElementsByTagName('input')[i]; i++) { input.disabled = false; }
-  for (var i=0,button; button=top.document.getElementsByTagName('button')[i]; i++) { button.disabled = false; }
-  for (var i=0,select; select=top.document.getElementsByTagName('select')[i]; i++) { select.disabled = false; }
-  for (var i=0,link; link=top.document.getElementsByTagName('a')[i]; i++) { link.style.color = "#3B5998"; }
-  for (var i=0,link; link=top.document.getElementById("menu").getElementsByTagName('a')[i]; i++) { link.style.color = "#FFFFFF"; }
-  for (var i=0,link; link=top.document.getElementById("header").getElementsByTagName('a')[i]; i++) { link.style.color = "#6FA239"; }
+  for (var i=0,input; input=document.getElementsByTagName('input')[i]; i++) { input.disabled = false; }
+  for (var i=0,button; button=document.getElementsByTagName('button')[i]; i++) { button.disabled = false; }
+  for (var i=0,select; select=document.getElementsByTagName('select')[i]; i++) { select.disabled = false; }
+  for (var i=0,link; link=document.getElementsByTagName('a')[i]; i++) { link.style.color = "#3B5998"; }
+  for (var i=0,link; link=document.getElementById("menu").getElementsByTagName('a')[i]; i++) { link.style.color = "#FFFFFF"; }
+  for (var i=0,link; link=document.getElementById("header").getElementsByTagName('a')[i]; i++) { link.style.color = "#6FA239"; }
 }
 function refresh() {
   disableInput();
   location = location;
 }
+function initab() {
+  $.removeCookie('one',{path:'/'});
+  $.removeCookie('tab',{path:'/'});
+}
 function settab(tab) {
-  if ($.cookie('one')==null) {$.cookie('tab',tab,{path:'/'})} else {if ($.cookie('tab')==null) $.removeCookie('one',{path:'/'});}
+<?switch ($myPage['Name']):?>
+<?case'Main':?>
+  $.cookie('tab',tab,{path:'/'});
+<?if ($var['fsState']=='Started'):?>
+  $.cookie('one','tab1',{path:'/'});
+<?endif;?>
+<?break;?>
+<?case'Cache':case'Data':case'Flash':case'Parity':?>
+  $.cookie('one',tab,{path:'/'});  
+<?break;?>
+<?default:?>
+  $.cookie($.cookie('one')==null?'tab':'one',tab,{path:'/'});
+<?endswitch;?>
 }
 function done() {
   var path = location.pathname;
@@ -220,7 +257,7 @@ function notifier() {
      var notification = $.parseJSON(object);
      $.jGrowl(notification.subject+'<br>'+notification.description, {
       sticky: true,
-      position: "<?=$dynamix['notify']['position']?>",
+      position: "<?=$notify['position']?>",
       header: notification.plugin+': '+notification.timestamp,
       theme: notification.importance+' '+notification.file,
       beforeOpen: function(e,m,o) {if ($('.jGrowl-notification').hasClass(notification.file)) {return(false);}},
@@ -245,26 +282,29 @@ function systemTemp() {
 setTimeout(systemTemp,50);
 <?endif;?>
 
-function arrayStatusbar() {
-  $.ajax({url:'/plugins/webGui/include/ArrayStatusbar.php',data:{dot:'<?=substr($display['number'],0,1)?>'},success:function(data) {
-    if (data) $('#statusbar').html(data);
+function watchdog() {
+  $.ajax({url:'/plugins/webGui/include/Watchdog.php',data:{mode:<?=$display['refresh']?>,dot:'<?=substr($display['number'],0,1)?>'},success:function(data) {
+  if (data) {$.each(data.split('@'),function(k,v) {
 <?if ($display['refresh']>0 || ($display['refresh']<0 && $var['mdResync']==0)):?>
-    setTimeout(arrayStatusbar,<?=abs($display['refresh'])?>);
+    if (v!='stop') $('#statusbar').html(v); else setTimeout(refresh,0);});}
+    setTimeout(watchdog,<?=abs($display['refresh'])?>);
+<?else:?>
+    if (v!='stop') $('#statusbar').html(v);});}
 <?endif;?>
   }});
 }
-setTimeout(arrayStatusbar,50);
+setTimeout(watchdog,50);
 
 $(function() {
   var tab = $.cookie('one')||$.cookie('tab')||'tab1';
-  if ($('#'+tab).length==0) tab = 'tab1';
+  if (tab=='tab0') tab = 'tab'+$('input[name$="tabs"]').length; else if ($('#'+tab).length==0) {initab(); tab = 'tab1';}
   $('#'+tab).attr('checked', true);
   updateTime();
   notifier();
   $.jGrowl.defaults.closer = false;
   Shadowbox.setup('a.sb-enable', {onClose:function() {enableInput();}});
 <?if ($confirm['warn']):?>
-  $('form').each(function() {$(this).change(function() {$.jGrowl('You have uncommitted form changes',{sticky:false,theme:'bottom',position:'bottom',life:5000});});});
+  $('form').find('select,input[type=text],input[type=password]').each(function() {$(this).change(function() {$.jGrowl('You have uncommitted form changes',{sticky:false,theme:'bottom',position:'bottom',life:5000});});});
 <?endif;?>
 });
 
@@ -279,7 +319,7 @@ for (var i=0,mobile; mobile=mobiles[i]; i++) {
  <div id="template">
   <div id="header" class="<?=$display['banner']?>">
    <div class="logo">
-   <a href="http://lime-technology.com"><img src="/plugins/webGui/images/logo.png" title="unRAID" border="0"/><br/>
+   <a href="http://lime-technology.com"><img src="/plugins/webGui/images/logo-<?=$display['theme']?>.png" title="unRAID" border="0"/><br/>
    <strong>unRAID Server <?=$var['regTy']?></strong></a>
    </div>
    <div class="block"><span class="text-left">
@@ -302,9 +342,10 @@ for (var i=0,mobile; mobile=mobiles[i]; i++) {
 <?  $pages = find_pages("Tasks");
     foreach ($pages as $page):
      $link = "/{$page['Name']}";
-?>   <div id="nav-item"<?=$page['Name']==$task?' class="active"':''?>><a href="<?=$link?>" onclick="$.removeCookie('one',{path:'/'});$.removeCookie('tab',{path:'/'})"><?=$page['Name']?></a></div>
+?>   <div id="nav-item"<?=$page['Name']==$task?' class="active"':''?>><a href="<?=$link?>" onclick="initab()"><?=$page['Name']?></a></div>
 <?  endforeach;
-?>  </div>
+    if ($display['usage']) my_usage();
+?>    </div>
     <div id="nav-right">
      <div id="nav-temp"></div>
      <div id="nav-item"><a href="/update.htm?cmd=tail%20-n%2040%20-f%20/var/log/syslog&forkCmd=Start" rel="shadowbox;height=600;width=800" title="System Log" class="sb-enable"><img src="/plugins/webGui/icons/log.png" class="system">Log</a></div>
@@ -322,15 +363,20 @@ for (var i=0,mobile; mobile=mobiles[i]; i++) {
   $tab = 1;
   foreach ($pages as $page):
    eval("\$title=\"{$page['Title']}\";");
-?> <div class="tab"><input type="radio" id="tab<?=$tab?>" name="tabs" onclick="settab(this.id)"><label for="tab<?=$tab++?>"><?=tab_title($title)?></label>
-   <div class="content">
-<? if ($page['Type']=="menu"):
+   if ($myPage['Name']!='Settings' || $display['tabs']):
+?> <div class="tab"><input type="radio" id="tab<?=$tab?>" name="tabs" onclick="settab(this.id)"><label for="tab<?=$tab++?>"><?=tab_title($title)?></label><div class="content">
+<? else:
+   if ($tab==1):
+?> <div class="tab"><input type="radio" id="tab<?=$tab++?>" name="tabs"><div class="content up70">
+<? endif;
+?> <div id="title""><span class="left"><?=tab_title($title)?></span></div>
+<? endif;
+   if ($page['Type']=="menu"):
     $pgs = find_pages($page['Name']);
     foreach ($pgs as $pg):
      $link = "$path/{$pg['Name']}";
 ?>   <div class="Panel">
-     <a href="<?=$link?>" onclick="$.cookie('one','tab1',{path:'/'})"><img class="PanelImg" src="<?=$pg['Icon']?>" title="<?=$pg['Title']?>"><br>
-     <div class="PanelText"><?=$pg['Title']?></div></a>
+     <a href="<?=$link?>" onclick="$.cookie('one','tab1',{path:'/'})"><img class="PanelImg" src="<?=$pg['Icon']?>" title="<?=$pg['Title']?>"><br><div class="PanelText"><?=$pg['Title']?></div></a>
      </div>
 <?  endforeach;
    elseif ($page['Type']=="php"):
@@ -338,13 +384,24 @@ for (var i=0,mobile; mobile=mobiles[i]; i++) {
    else:
     passthru($page['Type']);
    endif;
+   if ($display['tabs'] || $myPage['Name']!='Settings' || $tab==1):
 ?> </div></div>
-<?endforeach;
+<? endif;
+  endforeach;
 ?></div>
  </div>
  <iframe id="progressFrame" name="progressFrame" frameborder="0"></iframe>
  <div id="footer">
-  <span id="statusbar"></span>&bullet;&nbsp;<small><?=ucfirst(exec('cat log/plugins/dynamix.webGui'))?></small>
+  <span id="statusbar">
+<?switch ($var['fsState']):
+  case 'Stopped':
+    echo '<span class="red"><strong>Array Stopped</strong></span>'; break;
+  case 'Starting':
+    echo '<span class="orange"><strong>Array Starting</strong></span>'; break;
+  default:
+    echo '<span class="green"><strong>Array Started</strong></span>'; break;
+  endswitch;
+?></span>&bullet;&nbsp;<small><?=ucfirst(exec('cat log/plugins/dynamix.webGui'))?></small>
   <span id="copyright"><small>Author: <?=$myPage['Author']?>. Version: <?=$myPage['Version']?>.&nbsp;&nbsp;unRAID&#8482; webGui &copy; 2010-2013 Lime Technology LLC.</small></span>
  </div>
 </body>

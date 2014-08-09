@@ -8,11 +8,17 @@
 ?>
 <?
 parse_str($argv[1],$_GET);
-$url = "https://raw.github.com/bergware/dynamix/master/plugins";
+$hub = "https://raw.github.com/bergware/dynamix/master";
 $tmp = "/tmp/plugins.tmp";
 
 function get($version) {
-  return str_replace('.','',$version);
+  $numeral = 0; $weight = 1;
+  $ident = explode('.',$version);
+  foreach ($ident as $nibble) {
+    $numeral += $nibble/$weight;
+    $weight *= 100;
+  }
+  return $numeral;
 }
 
 function plugin_info($file,&$name,&$version,&$author) {
@@ -22,33 +28,33 @@ function plugin_info($file,&$name,&$version,&$author) {
   $author = ucfirst($parts[3]);
 }
 
-function plugin_search($plugin,$list) {
-  foreach ($list as $name) if (strpos($name,$plugin)!==false) return $name;
+function plugin_search($plugin,$local) {
+  foreach ($local as $name) if (strpos($name,$plugin)!==false) return $name;
   return null;
 }
 
 function plugin_list() {
-  global $url,$tmp;
+  global $hub,$tmp;
   $row = 0;
   exec("rm -f $tmp");
-  exec("wget --no-check-certificate -q -O $tmp $url/plugins.txt");
-  $latest = is_file($tmp) ? parse_ini_file($tmp,true) : array();
-  $list = array();
-  foreach (glob("/boot/plugins/dynamix.*.plg",GLOB_NOSORT) as $file) $list[] = basename($file,'.plg');
-  foreach (glob("/boot/config/plugins/dynamix.*.plg",GLOB_NOSORT) as $file) $list[] = basename($file,'.plg');
-  if (!$latest) {
-    foreach ($list as $file) {
+  exec("wget --no-check-certificate -q -O $tmp $hub/plugins/plugins.txt");
+  $online = is_file($tmp) ? parse_ini_file($tmp,true) : array();
+  $local = array();
+  foreach (glob("/boot/plugins/dynamix.*.plg",GLOB_NOSORT) as $file) $local[] = basename($file,'.plg');
+  foreach (glob("/boot/config/plugins/dynamix.*.plg",GLOB_NOSORT) as $file) $local[] = basename($file,'.plg');
+  if (!$online) {
+    foreach ($local as $file) {
       plugin_info($file,$name,$version,$author);
-      $latest[$name]['version'] = "*";
-      $latest[$name]['description'] = "Github information unavailable";
-      $latest[$name]['author'] = $author;
-      $latest[$name]['reboot'] = "n";
-      $latest[$name]['refresh'] = "n";
-      $latest[$name]['url'] = "";
+      $online[$name]['version'] = "*";
+      $online[$name]['description'] = "Github information unavailable";
+      $online[$name]['author'] = $author;
+      $online[$name]['reboot'] = "n";
+      $online[$name]['refresh'] = "n";
+      $online[$name]['url'] = "";
     }
   }
-  foreach ($latest as $plugin => $info) {
-    if ($file = plugin_search($plugin,$list)) {
+  foreach ($online as $plugin => $info) {
+    if ($file = plugin_search($plugin,$local)) {
       plugin_info($file,$name,$version,$author);
       if ("v$version"==exec("cut -d' ' -f2 /var/log/plugins/$name 2>/dev/null")) {
         $status = "Installed";
@@ -79,9 +85,9 @@ function plugin_list() {
     $href = ($status=='Installed' && $info['url']) ? "href='{$info['url']}'" : "href='#' style='cursor:default'";
     echo "<tr class='tr_row".($row^=1)."'><td><img src='$icon'></td><td><a $href>$name</a></td><td>{$info['description']}</td><td>$version</td><td>{$info['version']}</td><td>$author</td><td>$status</td><td>$button</td><td>$boot</td></tr>";
   }
-  foreach ($list as $file) {
+  foreach ($local as $file) {
     plugin_info($file,$name,$version,$author);
-    if (!isset($latest[$name])) {
+    if (!isset($online[$name])) {
       if (is_file("/var/log/plugins/$name")) {
         $status = "Installed";
         $uninstall = "<input type='button' id='$name-$version-{$info['reboot']}-{$info['refresh']}' value='Uninstall' onclick='pluginUninstall(this.id)'>";
@@ -112,22 +118,24 @@ case 'install':
   $version = $_GET['version'];
   $folder = $plugin=='dynamix.webGui' ? "/boot/plugins" : "/boot/config/plugins";
   $file = "$plugin-$version-noarch-bergware.plg";
-  if ($_GET['load']=='r') exec("wget --no-check-certificate -q -O $folder/$file $url/$file");
-  if (is_file("$folder/$file")) exec("/usr/local/sbin/installplg $folder/$file");
+  if ($_GET['load']=='r') exec("wget --no-check-certificate -q -O $folder/$file $hub/plugins/$file");
+  if (is_file("$folder/$file")) {
+    exec("/usr/local/sbin/installplg $folder/$file");
+    exec("wget --no-check-certificate -q -O /tmp/$plugin.txt $hub/changes/$plugin.txt");
+  }
   plugin_list();
 break;
 case 'update':
   $plugin = $_GET['plugin'];
   $version = $_GET['version'];
-  $github = $_GET['github'];
   $folder = $plugin=='dynamix.webGui' ? "/boot/plugins" : "/boot/config/plugins";
   $old = "$plugin-$version-noarch-bergware.plg";
-  $new = "$plugin-$github-noarch-bergware.plg";
-  exec("wget --no-check-certificate -q -O $folder/$new $url/$new");
+  $new = "$plugin-{$_GET['github']}-noarch-bergware.plg";
+  exec("wget --no-check-certificate -q -O $folder/$new $hub/plugins/$new");
   if (is_file("$folder/$new")) {
     exec("rm -f $folder/$old");
     exec("/usr/local/sbin/installplg $folder/$new");
-    exec("wget --no-check-certificate -q -O /tmp/{$plugin}.txt https://raw.github.com/bergware/dynamix/master/changes/{$plugin}.txt");
+    exec("wget --no-check-certificate -q -O /tmp/$plugin.txt $hub/changes/$plugin.txt");
   }
   plugin_list();
 break;

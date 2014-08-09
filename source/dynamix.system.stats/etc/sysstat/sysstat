@@ -1,4 +1,4 @@
-# sysstat-10.0.5 configuration file.
+# sysstat-10.2.1 configuration file.
 
 # How long to keep log files (in days).
 # If value is greater than 28, then log files are kept in
@@ -11,3 +11,4 @@ COMPRESSAFTER=10
 # Parameters for the system activity data collector (see sadc manual page)
 # which are used for the generation of log files.
 SADC_OPTIONS=""
+

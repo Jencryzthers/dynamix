@@ -2,7 +2,7 @@
 <head>
 <link type="text/css" rel="stylesheet" href="/plugins/webGui/fonts/dynamix.css">
 <style>
-.logLine{font-family:bitstream,courier,monospace;font-size:10px;}
+.logLine{font-family:bitstream,courier,monospace;font-size:10px;color:#505050;}
 </style>
 <script>
 var next_page=parent.location;
@@ -18,16 +18,16 @@ function addLog(logLine) {
   window.scrollTo(0,document.body.scrollHeight);
 }
 function disable_form_elements() {
-  for (var i=0; i<top.window.document.forms.length; i++) {
-    var x = top.window.document.forms[i];
+  for (var i=0; i<window.document.forms.length; i++) {
+    var x = window.document.forms[i];
     for(var j=0; j<x.length; j++){
         x.elements[j].disabled = true;
     }
   }
 }
 function disable_links() {
-  for (var i=0; i<top.window.document.links.length; i++) {
-    var x = top.window.document.links[i];
+  for (var i=0; i<window.document.links.length; i++) {
+    var x = window.document.links[i];
     // no cross-browser way to disable link, so just turn it gray :)
     x.style.color="gray";
   }

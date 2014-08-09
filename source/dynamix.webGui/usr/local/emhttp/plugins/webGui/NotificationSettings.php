@@ -7,9 +7,6 @@
  */
 /* Adapted by Bergware International (December 2013) */
 ?>
-<?
-$ini = &$dynamix['notify'];
-?>
 <style>
 .dataTables_filter {margin-top:-32px;}
 .bottom {padding:10px;}
@@ -43,29 +40,29 @@ function resetNotify(form) {
   <tr>
   <td>Date format:</td>
   <td><select name="date" size="1">
-  <?=mk_option($ini['date'], "d/m/Y", "DD-MM-YYYY")?>
-  <?=mk_option($ini['date'], "m/d/Y", "MM-DD-YYYY")?>
+  <?=mk_option($notify['date'], "d/m/Y", "DD-MM-YYYY")?>
+  <?=mk_option($notify['date'], "m/d/Y", "MM-DD-YYYY")?>
   </select></td>
   </tr>
   <tr>
   <td>Time format:</td>
   <td><select name="time" size="1">
-  <?=mk_option($ini['time'], "h:i A", "12 hours")?>
-  <?=mk_option($ini['time'], "H:i", "24 hours")?>
+  <?=mk_option($notify['time'], "h:i A", "12 hours")?>
+  <?=mk_option($notify['time'], "H:i", "24 hours")?>
   </select></td>
   </tr>
   <tr>
   <td>Storage path:</td>
-  <td><input type="text" name="path" value="<?=$ini['path']?>"><?=(exec("echo {$ini['path']} | grep '^/mnt'") ? 'Permanent storage' : 'Temporary storage')?></td>
+  <td><input type="text" name="path" value="<?=$notify['path']?>"><?=(exec("echo {$notify['path']} | grep '^/mnt'") ? 'Permanent storage' : 'Temporary storage')?></td>
   </tr>
   <tr>
   <td>Display position:</td>
   <td><select name="position" size="1">
-  <?=mk_option($ini['position'], "top-left", "top-left")?>
-  <?=mk_option($ini['position'], "top-right", "top-right")?>
-  <?=mk_option($ini['position'], "bottom-left", "bottom-left")?>
-  <?=mk_option($ini['position'], "bottom-right", "bottom-right")?>
-  <?=mk_option($ini['position'], "center", "center")?>
+  <?=mk_option($notify['position'], "top-left", "top-left")?>
+  <?=mk_option($notify['position'], "top-right", "top-right")?>
+  <?=mk_option($notify['position'], "bottom-left", "bottom-left")?>
+  <?=mk_option($notify['position'], "bottom-right", "bottom-right")?>
+  <?=mk_option($notify['position'], "center", "center")?>
   </select></td>
   </tr>
   <td><button type="button" onclick="resetNotify(this.form);">Default</button></td>

@@ -13,9 +13,9 @@ $folder = isset($_GET['#plugin']) ? strtok($plugin,'.') : "dynamix";
 $section = isset($_GET['#section']) ? $_GET['#section'] : "";
 $cleanup = isset($_GET['#cleanup']);
 
-$ini = "boot/config/plugins/$folder/$plugin.cfg";
+$cfg = "boot/config/plugins/$folder/$plugin.cfg";
 
-$keys = parse_ini_file($ini,$section);
+$keys = parse_ini_file($cfg,$section);
 $save = true;
 
 if (isset($_GET['#include'])) include $_GET['#include'];
@@ -31,7 +31,7 @@ if ($save) {
     foreach ($_GET as $key => $value) if (substr($key,0,1)!='#') $keys[$key] = $value;
     foreach ($keys as $key => $value) if (strlen($value) || !$cleanup) $rom .= "$key=\"$value\"\n";
   }
-  file_put_contents($ini,$rom);
+  file_put_contents($cfg,$rom);
 }
 ?>
 <html>

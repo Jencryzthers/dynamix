@@ -7,24 +7,23 @@
  */
 ?>
 <?
-$ini = &$dynamix['parity'];
 $sName = 'crontab';
 $mode = array('Disabled','Daily','Weekly','Monthly','Yearly','Every');
 $days = array('Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday');
 $months = array('January','February','March','April','May','June','July','August','September','October','November','December');
 $memory = '/tmp/memory.tmp';
 if (file_exists($memory)) {
-  parse_str(file_get_contents($memory), $ini);
-  if (!isset($ini['hour'])) $ini['hour'] = "";
-  if (!isset($ini['day'])) $ini['day'] = "";
-  if (!isset($ini['dotm'])) $ini['dotm'] = "";
-  if (!isset($ini['month'])) $ini['month'] = "";
-  if (!isset($ini['write'])) $ini['write'] = "";
+  parse_str(file_get_contents($memory), $parity);
+  if (!isset($parity['hour'])) $parity['hour'] = "";
+  if (!isset($parity['day'])) $parity['day'] = "";
+  if (!isset($parity['dotm'])) $parity['dotm'] = "";
+  if (!isset($parity['month'])) $parity['month'] = "";
+  if (!isset($parity['write'])) $parity['write'] = "";
   exec("rm -f $memory");
 }
 ?>
 <script>
-<?if ($ini['mode']==5):?>
+<?if ($parity['mode']==5):?>
 $(function() {
   $("#s1").dropdownchecklist({emptyText:'Every day', width:140, explicitClose:'...close'});
   $("#s2").dropdownchecklist({emptyText:'Every month', width:140, explicitClose:'...close'});
@@ -84,93 +83,93 @@ function resetParity(form) {
   <td>Scheduled parity check:</td>
   <td><select name="mode" size="1" onchange="submit()">
 <?for ($m=0; $m<count($mode); $m++):?>
-<?=mk_option($ini['mode'], strval($m), $mode[$m])?>
+<?=mk_option($parity['mode'], strval($m), $mode[$m])?>
 <?endfor;?>
   </select></td>
   </tr>
   <tr>
   <td>Day of the week:</td>
-<?if ($ini['mode']==2):?>
+<?if ($parity['mode']==2):?>
   <td><select name="day" size="1">
 <?for ($d=0; $d<count($days); $d++):?>
-<?=mk_option($ini['day'], strval($d), $days[$d])?>
+<?=mk_option($parity['day'], strval($d), $days[$d])?>
 <?endfor;?>
-<?elseif ($ini['mode']==5):?>
+<?elseif ($parity['mode']==5):?>
   <td><select id="s1" name="day" size="1" multiple="multiple" style="display:none">
 <?for ($d=0; $d<count($days); $d++):?>
-<?=mk_option_check($ini['day'], strval($d), $days[$d])?>
+<?=mk_option_check($parity['day'], strval($d), $days[$d])?>
 <?endfor;?>
 <?else:?>
   <td><select name="day" size="1">
-<?=mk_option($ini['day'], "*", "--------")?>
+<?=mk_option($parity['day'], "*", "--------")?>
 <?endif;?>
   </select></td>
   </tr>
   <tr>
-<?if ($ini['mode']<5):?>
+<?if ($parity['mode']<5):?>
   <td>Day of the month:</td>
 <?else:?>
   <td>Week of the month:</td>
 <?endif;?>
   <td><select name="dotm" size="1">
-<?if ($ini['mode']>=3):?>
-<?if ($ini['mode']==5):?>
-<?=mk_option($ini['dotm'], "*", "Every week")?>
-<?=mk_option($ini['dotm'], "W1", "First week")?>
-<?=mk_option($ini['dotm'], "W2", "Second week")?>
-<?=mk_option($ini['dotm'], "W3", "Third week")?>
-<?=mk_option($ini['dotm'], "W4", "Fourth week")?>
-<?=mk_option($ini['dotm'], "WL", "Last week")?>
+<?if ($parity['mode']>=3):?>
+<?if ($parity['mode']==5):?>
+<?=mk_option($parity['dotm'], "*", "Every week")?>
+<?=mk_option($parity['dotm'], "W1", "First week")?>
+<?=mk_option($parity['dotm'], "W2", "Second week")?>
+<?=mk_option($parity['dotm'], "W3", "Third week")?>
+<?=mk_option($parity['dotm'], "W4", "Fourth week")?>
+<?=mk_option($parity['dotm'], "WL", "Last week")?>
 <?else:?>
-<?=mk_option($ini['dotm'], "1", "First day")?>
-<?=mk_option($ini['dotm'], "28-31", "Last day")?>
+<?=mk_option($parity['dotm'], "1", "First day")?>
+<?=mk_option($parity['dotm'], "28-31", "Last day")?>
 <?for ($d=2; $d<=31; $d++):?>
-<?=mk_option($ini['dotm'], strval($d), sprintf("%02d", $d))?>
+<?=mk_option($parity['dotm'], strval($d), sprintf("%02d", $d))?>
 <?endfor;?>
 <?endif;?>
 <?else:?>
-<?=mk_option($ini['dotm'], "*", "--------")?>
+<?=mk_option($parity['dotm'], "*", "--------")?>
 <?endif;?>
   </select></td>
   </tr>
   <tr>
   <td>Time of the day:</td>
   <td><select name="hour" size="1">
-<?if ($ini['mode']>0):?>
+<?if ($parity['mode']>0):?>
 <?for ($h=0; $h<24; $h++):?>
-<?=mk_option($ini['hour'], sprintf("0 %d", $h), sprintf("%02d:00", $h))?>
-<?=mk_option($ini['hour'], sprintf("30 %d",$h), sprintf("%02d:30", $h))?>
+<?=mk_option($parity['hour'], sprintf("0 %d", $h), sprintf("%02d:00", $h))?>
+<?=mk_option($parity['hour'], sprintf("30 %d",$h), sprintf("%02d:30", $h))?>
 <?endfor;?>
 <?else:?>
-<?=mk_option($ini['hour'], "*", "--------")?>
+<?=mk_option($parity['hour'], "*", "--------")?>
 <?endif;?>
   </select></td>
   </tr>
   <tr>
   <td>Month of the year:</td>
-<?if ($ini['mode']>=4):?>
-<?if ($ini['mode']==5):?>
+<?if ($parity['mode']>=4):?>
+<?if ($parity['mode']==5):?>
   <td><select id="s2" name="month" size="1" multiple="multiple" style="display:none">
 <?for ($m=0; $m<count($months); $m++):?>
-<?=mk_option_check($ini['month'], strval($m+1), $months[$m])?>
+<?=mk_option_check($parity['month'], strval($m+1), $months[$m])?>
 <?endfor;?>
 <?else:?>
   <td><select name="month" size="1">
 <?for ($m=0; $m<count($months); $m++):?>
-<?=mk_option($ini['month'], strval($m+1), $months[$m])?>
+<?=mk_option($parity['month'], strval($m+1), $months[$m])?>
 <?endfor;?>
 <?endif;?>
 <?else:?>
   <td><select name="month" size="1">
-<?=mk_option($ini['month'], "*", "--------")?>
+<?=mk_option($parity['month'], "*", "--------")?>
 <?endif;?>
   </select></td>
   </tr>
   <tr>
   <td>Write corrections to parity disk:</td>
   <td><select name="write" size="1">
-<?=mk_option($ini['write'], "", "Yes")?>
-<?=mk_option($ini['write'], "NOCORRECT", "No")?>
+<?=mk_option($parity['write'], "", "Yes")?>
+<?=mk_option($parity['write'], "NOCORRECT", "No")?>
   </select></td>
   </tr>
   <tr>

@@ -9,7 +9,8 @@
 <?
 $plugin = 'dynamix.email.notify';
 $dynamix = parse_ini_file("boot/config/plugins/dynamix/$plugin.cfg",true);
-$ini = &$dynamix['email'];
+extract($dynamix);
+unset($dynamix);
 
 $sName = "unraid_notify";
 $fName = "/usr/bin/$sName";
@@ -67,8 +68,8 @@ function countdown() {
   <tr>
   <td>Mail notifications function:</td>
   <td><select name="service" size="1" onchange="presetMail(this.form);">
-<?=mk_option($ini['service'], "0", "Disabled")?>
-<?=mk_option($ini['service'], "1", "Enabled")?>
+<?=mk_option($email['service'], "0", "Disabled")?>
+<?=mk_option($email['service'], "1", "Enabled")?>
   </select></td>
   </tr>
 <?

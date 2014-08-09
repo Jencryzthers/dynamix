@@ -5,7 +5,7 @@
 * the Free Software Foundation; either version 2, or (at your option)
 * any later version.
 */
-/* Adapted by Bergware International (December 2013) */
+/* Adapted by Bergware International (June 2014) */
 ?>
 <?
 $help = <<<EOF
@@ -16,7 +16,25 @@ expression terms: [a-z_][a-z0-9_-]*[$]?
 <p>Usernames may only be up to 32 characters long.
 EOF
 ?>
-<form method="POST" action="/update.htm" target="progressFrame">
+<script>
+function checkUsername(userName) {
+  if (!userName) {
+    alert('Please enter a user name');
+    return false;
+  }
+  if (userName.match('[A-Z]| ')) {
+    alert('Invalid user name specified\nDo not use uppercase or space characters.');
+    return false;
+  }
+  if (userName.match('^disk[0-9]+$')) {
+    alert('Invalid user name specified\nDo not use reserved names.');
+    return false;
+  }
+  return true;
+}
+</script>
+
+<form method="POST" action="/update.htm" target="progressFrame" onsubmit="return checkUsername(this.userName.value)">
 <table class="settings">
   <tr>
   <td>User name:</td>

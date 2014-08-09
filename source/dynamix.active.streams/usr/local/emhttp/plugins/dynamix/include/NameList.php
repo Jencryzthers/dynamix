@@ -10,7 +10,7 @@
 <?
 parse_str($argv[1],$_GET);
 $plugin = $_GET['plugin'];
-$ini = parse_ini_file("boot/config/plugins/dynamix/$plugin.cfg");
+$cfg = parse_ini_file("boot/config/plugins/dynamix/$plugin.cfg");
 $warn = $_GET['warn'];
 ?>
 <script>
@@ -40,13 +40,13 @@ function done(button) {
   <tr><td style="font-size:12px;font-weight:bold">IP Address</td><td style="font-size:12px;font-weight:bold">User Name</td></tr>
 <?
   $online = array();
-  exec("lsof -i -n -P|awk -F'>' '/^(smb|afp)d.*ESTABLISHED\)$/ {print $2}'|cut -d':' -f1", &$online);
+  exec("lsof -i -n -P|awk -F'>' '/^(smbd|afpd|Plex).*ESTABLISHED\)$/ {print $2}'|cut -d':' -f1",$online);
   foreach ($online as $host) {
     $ip = str_replace('.','_',$host);
-    if (!isset($ini[$ip])) $ini[$ip] = "";
+    if (!isset($cfg[$ip])) $cfg[$ip] = "";
   }
-  ksort($ini);
-  foreach ($ini as $ip => $name) {
+  ksort($cfg);
+  foreach ($cfg as $ip => $name) {
     echo "<tr><td style='font-weight:normal'>".str_replace('_','.',$ip)."</td><td><input type='text' name='$ip' value='$name'></td></tr>";
   }
 ?>

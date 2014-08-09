@@ -11,7 +11,7 @@
 <script type="text/javascript" src="/plugins/dynamix/scripts/jquery.stylesidebar.js"></script>
 <?
 $plugin = 'dynamix.disk.health';
-$ini = parse_ini_file("boot/config/plugins/dynamix/$plugin.cfg");
+$cfg = parse_ini_file("boot/config/plugins/dynamix/$plugin.cfg");
 
 foreach ($disks as $disk) {
   $name = $disk['name'];
@@ -42,7 +42,7 @@ function updater(){
   $name = $disk['name'];
   $dev = $disk['device'];
   if ($name!='flash' && $dev):
-?>$.ajax({url:'/plugins/dynamix/include/Run.php',data:'cmd=health&port=<?=$dev?>&poll=<?=$ini['poll']?>',success:function(data){$('#<?=$dev?>').removeClass().addClass(data);}});
+?>$.ajax({url:'/plugins/dynamix/include/Run.php',data:'cmd=health&port=<?=$dev?>&poll=<?=$cfg['poll']?>',success:function(data){$('#<?=$dev?>').removeClass().addClass(data);}});
 <?endif;
   endforeach;
 ?>

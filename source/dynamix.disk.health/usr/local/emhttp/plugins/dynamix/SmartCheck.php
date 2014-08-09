@@ -122,11 +122,11 @@ $(function(){
 </tr>
 <tr>
 <td>SMART short test:</td>
-<td><? echo $spin ? "<input type='button' value='$start' id='short'>" : "Disk must be spun up before running test"; ?></td>
+<td><? echo $spin ? "<input type='button' value='$start' id='short'>" : "<big>Disk must be spun up before running test</big>"; ?></td>
 </tr>
 <tr>
 <td>SMART extended test:</td>
-<td><? echo $spin ? "<input type='button' value='$start' id='long'>" : "Disk must be spun up before running test"; ?></td>
+<td><? echo $spin ? "<input type='button' value='$start' id='long'>" : "<big>Disk must be spun up before running test</big>"; ?></td>
 </tr>
 <tr>
 <td>Disk identity:</td>

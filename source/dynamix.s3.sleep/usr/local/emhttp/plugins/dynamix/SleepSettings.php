@@ -9,17 +9,17 @@
 ?>
 <?
 $plugin = 'dynamix.s3.sleep';
-$ini = parse_ini_file("boot/config/plugins/dynamix/$plugin.cfg");
+$cfg = parse_ini_file("boot/config/plugins/dynamix/$plugin.cfg");
 $sName = "s3_sleep";
 $fName = "/usr/local/sbin/$sName";
 $config = "/etc/s3_sleep.conf";
 $folder = "/usr/local/bin";
 
 unset($sPorts);
-exec("ifconfig -s | awk '$1~/[0-9]$/ {print $1}'", &$sPorts);
+exec("ifconfig -s|awk '$1~/[0-9]$/ {print $1}'",$sPorts);
 
 unset($sExcludeList);
-exec("$fName -ED", &$sExcludeList);
+exec("$fName -ED",$sExcludeList);
 
 $days = array('Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday');
 ?>
@@ -159,16 +159,16 @@ function logNote(form) {
 <table class="settings">
   <tr><td>Sleep or shutdown function:</td>
   <td><select name="service" size="1" onchange="presetSleep(this.form)">
-<?=mk_option($ini['service'], "0", "Disabled")?>
-<?=mk_option($ini['service'], "1", "Sleep")?>
-<?=mk_option($ini['service'], "2", "Shutdown")?>
-  </select>(<?=exec("$fName -V")?>)</td>
+<?=mk_option($cfg['service'], "0", "Disabled")?>
+<?=mk_option($cfg['service'], "1", "Sleep")?>
+<?=mk_option($cfg['service'], "2", "Shutdown")?>
+  </select></td>
   </tr>
   <tr><td>Excluded days:</td>
   <td><select id="s2" name="stopDay" size="1" multiple="multiple" style="display:none">
   <option value='' selected></option>
 <?for ($d=0; $d<count($days); $d++):?>
-<?=mk_option_check($ini['stopDay'], strval($d), $days[$d])?>
+<?=mk_option_check($cfg['stopDay'], strval($d), $days[$d])?>
 <?endfor;?>
   </select></td>
   </tr>
@@ -176,31 +176,31 @@ function logNote(form) {
   <td><select id="s1" name="stopHour" size="1" multiple="multiple" style="display:none">
   <option value='' selected></option>
 <?for ($h=0; $h<24; $h++):?>
-<?=mk_option_check($ini['stopHour'], sprintf("%02d", $h), sprintf("%02d:00", $h))?>
+<?=mk_option_check($cfg['stopHour'], sprintf("%02d", $h), sprintf("%02d:00", $h))?>
 <?endfor;?>
   </select></td>
   </tr>
   <tr><td>Wait for array inactivity:</td>
   <td><select name="checkHDD" size="1">
-<?=mk_option($ini['checkHDD'], "", "No")?>
-<?=mk_option($ini['checkHDD'], "-a", "Yes")?>
+<?=mk_option($cfg['checkHDD'], "", "No")?>
+<?=mk_option($cfg['checkHDD'], "-a", "Yes")?>
 <?if (is_dir("/mnt/cache")):?>
-<?=mk_option($ini['checkHDD'], "-a -c", "Yes, exclude Cache")?>
+<?=mk_option($cfg['checkHDD'], "-a -c", "Yes, exclude Cache")?>
 <?endif;?>
   </select></td>
   </tr>
 <?if (array_filter($sExcludeList)):?>
   <tr><td>Exclude disks outside array:</td>
     <td><select name="exclude" size="1" onChange="changeExclude(this.form)">
-    <?=mk_option($ini['exclude'], "", "No")?>
-    <?=mk_option($ini['exclude'], "-A -E", "Only selected")?>
-    <?=mk_option($ini['exclude'], "-A -I", "All, but selected")?>
-    <?=mk_option($ini['exclude'], "-A", "All")?>
+    <?=mk_option($cfg['exclude'], "", "No")?>
+    <?=mk_option($cfg['exclude'], "-A -E", "Only selected")?>
+    <?=mk_option($cfg['exclude'], "-A -I", "All, but selected")?>
+    <?=mk_option($cfg['exclude'], "-A", "All")?>
     </select></td>
   </tr>
   <tr><td></td><td><select id="excludeList" name="excludeList[]" width="320" style="width:320px;" multiple>
   <?
-  $excludesMarked = $ini['excludeList'];
+  $excludesMarked = $cfg['excludeList'];
   $excludesMarkedArray = explode (",", $excludesMarked);
   foreach ($sExcludeList as $excludeOption){
     $selected = "";
@@ -218,69 +218,70 @@ function logNote(form) {
   <input type="hidden" name="excludeList" value="">
 <?endif;?>
   <tr><td>Extra delay after array inactivity (minutes):</td>
-  <td><input type="text" name="timeout" maxlength="2" value="<?=$ini['timeout']?>">default = 30 minutes</td>
+  <td><input type="text" name="timeout" maxlength="2" value="<?=$cfg['timeout']?>">default = 30 minutes</td>
   </tr>
   <tr><td>Wait for network inactivity:</td>
   <td><select name="checkTCP" size="1" onchange="changeIdle(this.form)">
-<?=mk_option($ini['checkTCP'], "", "No")?>
-<?=mk_option($ini['checkTCP'], "-n", "Yes")?>
+<?=mk_option($cfg['checkTCP'], "", "No")?>
+<?=mk_option($cfg['checkTCP'], "-n", "Yes")?>
   </select></td>
   </tr>
   <tr><td>Network idle threshold (kB/s):</td>
-  <td><input type="text" name="idle" maxlength="4">default = 0 kB/s</td>
+  <td><input type="text" name="idle" maxlength="4" value="<?=$cfg['idle']?>">default = 0 kB/s</td>
   </tr>
   <tr><td>Wait for device inactivity (address):</td>
-  <td><input type="text" name="pingIP" maxlength="200" value="<?=$ini['pingIP']?>">default = no devices</td>
+  <td><input type="text" name="pingIP" maxlength="200" value="<?=$cfg['pingIP']?>">default = no devices</td>
   </tr>
   <tr><td>Wait for user login inactivity:</td>
   <td><select name="login" size="1">
-<?=mk_option($ini['login'], "", "No")?>
-<?=mk_option($ini['login'], "-l", "Local")?>
-<?=mk_option($ini['login'], "-L", "Remote")?>
-<?=mk_option($ini['login'], "-l -L", "Local & Remote")?>
+<?=mk_option($cfg['login'], "", "No")?>
+<?=mk_option($cfg['login'], "-l", "Local")?>
+<?=mk_option($cfg['login'], "-L", "Remote")?>
+<?=mk_option($cfg['login'], "-l -L", "Local & Remote")?>
   </select></td>
   </tr>
   <tr><td>Ethernet interface:</td>
   <td><select name="port" size="1" onchange="changePort(this.form)">
 <?foreach ($sPorts as $port):?>
-<?=mk_option_check($ini['port'], $port, $port)?>
+<?=mk_option_check($cfg['port'], $port, $port)?>
 <?endforeach;?>
   </select></td>
   </tr>
   <tr><td>Force gigabit speed after wake-up:</td>
   <td><select name="forceGb" size="1">
-<?=mk_option($ini['forceGb'], "", "No")?>
-<?=mk_option($ini['forceGb'], "-F", "Yes")?>
+<?=mk_option($cfg['forceGb'], "", "No")?>
+<?=mk_option($cfg['forceGb'], "-F", "Yes")?>
   </select></td>
   </tr>
   <tr><td>DHCP renewal after wake-up:</td>
   <td><select name="dhcpRenew" size="1">
-<?=mk_option($ini['dhcpRenew'], "", "No")?>
-<?=mk_option($ini['dhcpRenew'], "-R", "Yes")?>
+<?=mk_option($cfg['dhcpRenew'], "", "No")?>
+<?=mk_option($cfg['dhcpRenew'], "-R", "Yes")?>
   </select></td>
   </tr>
   <tr><td>Set WOL options before sleep:</td>
-  <?unset($wakeon); exec("ethtool {$ini['port']} | grep 'Wake-on' | cut -d':' -f2", &$wakeon)?>
-  <td><input type="text" name="setWol" maxlength="8" value="<?=$ini['setWol']?>"> <?if ($wakeon):?>current = <?=$wakeon[1]?> (available options: <strong><?=$wakeon[0]?></strong>)<?endif;?></td>
+<?unset($wakeon); exec("ethtool {$cfg['port']}|awk -F':' '/Wake-on/ {print $2}'",$wakeon)?>
+  <td><input type="text" name="setWol" maxlength="8" value="<?=$cfg['setWol']?>"> <?if ($wakeon):?>current = <?=$wakeon[1]?> (available options: <strong><?=$wakeon[0]?></strong>)<?endif;?></td>
   </tr>
   <tr><td>Custom commands before sleep:</td>
-  <td><textarea name="preRun" rows="3" columns="120" wrap="off"><?=urldecode($ini['preRun'])?></textarea></td>
+  <td><textarea name="preRun" rows="3" columns="120" wrap="off"><?=urldecode($cfg['preRun'])?></textarea></td>
   </tr>
   <tr><td>Custom commands after wake-up:</td>
-  <td><textarea name="postRun" rows="3" columns="120" wrap="off"><?=urldecode($ini['postRun'])?></textarea></td>
+  <td><textarea name="postRun" rows="3" columns="120" wrap="off"><?=urldecode($cfg['postRun'])?></textarea></td>
   </tr>
   <tr><td>Enable DEBUG mode:</td>
   <td><select name="debug" size="1" onchange="logNote(this.form)">
-<?=mk_option($ini['debug'], "0", "No")?>
-<?=mk_option($ini['debug'], "1", "Syslog and flash")?>
-<?=mk_option($ini['debug'], "2", "Syslog")?>
-<?=mk_option($ini['debug'], "3", "Flash")?>
-<?=mk_option($ini['debug'], "4", "Console")?>
+<?=mk_option($cfg['debug'], "0", "No")?>
+<?=mk_option($cfg['debug'], "1", "Syslog and flash")?>
+<?=mk_option($cfg['debug'], "2", "Syslog")?>
+<?=mk_option($cfg['debug'], "3", "Flash")?>
+<?=mk_option($cfg['debug'], "4", "Console")?>
   </select><span id="note" style="color:red;display:none">Log will be stored in <b>"/boot/logs/<?=$sName?>.log"</b></span></td>
   </tr>
   <tr>
   <td><button type="button" onclick="resetSleep(this.form);">Default</button></td>
   <td><input type="submit" name="#apply" value="Apply"><button type="button" onclick="done();">Done</button></td>
   </tr>
+  <tr><td style="font-weight:normal;font-style:italic;font-size:smaller"><?=exec("$fName -V")?></td><td></td></tr>
 </table>
 </form>

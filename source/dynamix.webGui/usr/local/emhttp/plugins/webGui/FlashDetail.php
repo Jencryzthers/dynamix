@@ -47,3 +47,5 @@
   </tr>
 <?endif;?>
 </table>
+<br>
+<button type="button" onClick="done();">Done</button>

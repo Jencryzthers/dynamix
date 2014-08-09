@@ -12,7 +12,7 @@ function pluginInstall(plugin) {
   document.getElementById(plugin).value = 'Installing...';
   $.ajax({url:'/plugins/dynamix/include/PluginControl.php',data:{cmd:'install',plugin:part[0],version:part[1],load:part[2]},success:function(data) {
     if (data) $('#pluginList').html(data);
-    if (part[3]=='y') setTimeout(refresh,0);
+    if (part[3]=='y') setTimeout(refresh,0); else if ($('a.sb-refresh').length) Shadowbox.setup('a.sb-refresh', {onClose:function() {pluginInit();}});
   }});
 }
 
@@ -21,7 +21,7 @@ function pluginUpdate(plugin) {
   document.getElementById(plugin).value = 'Updating...';
   $.ajax({url:'/plugins/dynamix/include/PluginControl.php',data:{cmd:'update',plugin:part[0],version:part[1],github:part[2]},success:function(data) {
     if (data) $('#pluginList').html(data);
-    if (part[3]=='y') setTimeout(refresh,0);
+    if (part[3]=='y') setTimeout(refresh,0); else if ($('a.sb-refresh').length) Shadowbox.setup('a.sb-refresh', {onClose:function() {pluginInit();}});
   }});
 }
 

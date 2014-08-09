@@ -39,7 +39,7 @@
 <?if ($var['shareSMBEnabled']=="yes"):?>
   <tr>
   <td>Connected users:</td>
-  <td><?exec("smbstatus -p | awk 'NR>4 {print $2}' | uniq", &$list); echo implode(',',$list)?></td>
+  <td><?exec("smbstatus -p | awk 'NR>4 {print $2}' | uniq", $list); echo implode(',',$list)?></td>
   </tr>
   <tr>
   <td>Workgroup:</td>

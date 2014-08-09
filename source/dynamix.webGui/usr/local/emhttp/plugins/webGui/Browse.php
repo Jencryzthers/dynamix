@@ -18,9 +18,9 @@ function sort_by($field, $opt, $show_disk) {
   $path = '/usr/local/emhttp'.preg_replace('/([\'" &()[\]\\\\])/','\\\\$1',$dir).'/*';
   $file = array(); $disk = array(); $list = array();
   $i = 0;
-  exec("stat -L -c'%F|%n|%s|%Y' $path", &$file);
+  exec("stat -L -c'%F|%n|%s|%Y' $path", $file);
   if ($show_disk)
-    exec("getfattr --absolute-names -n user.LOCATION $path | awk -F'\"' '/^user.LOCATION/ {print $2}'", &$disk);
+    exec("getfattr --absolute-names -n user.LOCATION $path | awk -F'\"' '/^user.LOCATION/ {print $2}'", $disk);
   else
     $disk = array_fill(0, (count($file)>0?count($file):1), '');
   foreach ($file as $entry) {
@@ -78,6 +78,7 @@ $name_order=($column=='name'?$order:'A');
 $size_order=($column=='size'?$order:'A');
 $time_order=($column=='time'?$order:'A');
 $disk_order=($column=='disk'?$order:'A');
+$row=1;
 ?>
 <table id="indexer">
   <tr>
@@ -89,7 +90,8 @@ $disk_order=($column=='disk'?$order:'A');
 <?endif;?>
   <td><a href="<?='/'.$path.'?dir='.$dir.'&column=time&order='.$time_order?>">Last Modified</a></td>
   </tr>
-  <tr>
+<?if ($dir):?>
+  <tr class="tr_row<?=$row^=1?>">
   <td><div class="icon-dirup"></div></td>
   <td><a href="<?='/'.$path.'?dir='.safe_dirname($dir)?>">Parent Directory</a></td>
   <td></td>
@@ -98,9 +100,10 @@ $disk_order=($column=='disk'?$order:'A');
   <td></td>
 <?endif;?>
   </tr>
+<?endif;?>
 <?$dirs=0; $files=0; $total=0;
   foreach ($list as $entry):
-?>  <tr>
+?>  <tr class="tr_row<?=$row^=1?>">
 <?  if ($entry['type']=='directory'):
       $dirs++;
       $warn = "";

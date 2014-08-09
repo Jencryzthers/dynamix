@@ -15,7 +15,7 @@ function my_temp($val) {
 parse_str($argv[1], $_GET);
 $unit = $_GET['unit'];
 $temp = array();
-exec("sensors -A | awk '/^CPU Temp/ {print $3*1}; /^M\/?B Temp/ {print $3*1}'", &$temp);
+exec("sensors -A|awk '/^CPU Temp/ {print $3*1}; /^M\/?B Temp/ {print $3*1}'",$temp);
 echo "<img src='/plugins/dynamix/icons/cpu.png' title='Processor' class='icon'>".my_temp($temp[0])."&nbsp;";
 echo "<img src='/plugins/dynamix/icons/mb.png' title='Motherboard' class='icon'>".my_temp($temp[1]);
 ?>

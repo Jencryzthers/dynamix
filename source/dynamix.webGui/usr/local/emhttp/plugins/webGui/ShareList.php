@@ -31,7 +31,7 @@ foreach (glob("state/plugins/webGui/*.ssz", GLOB_NOSORT) as $entry) {
 $row = 0;
 foreach ($shares as $name => $share):
 ?><tr class="tr_row<?=$row^=1?>">
-  <td><a href='#' class='info' onClick='return false'>
+  <td><a href='#' class='info nohand' onClick='return false'>
   <img src='/plugins/webGui/images/<?=$share['color']?>.png' class='icon'><span>
   <img src='/plugins/webGui/images/green-on.png' class='icon'>All files on array<br>
   <img src='/plugins/webGui/images/yellow-on.png' class='icon'>Cache contains files<br>
@@ -66,5 +66,5 @@ endforeach;
 </table>
 <form method="GET" action="<?=$path?>/Share">
 <input type="hidden" name="name" value="">
-<p class="centered"><input type="submit" value="Add Share"></p>
+<p class="centered"><input type="submit" value="Add Share"<?=$var['shareUser']=='e'?'>':' disabled>User shares must be <strong>enabled</strong> to add shares.'?></p>
 </form>

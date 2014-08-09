@@ -13,7 +13,7 @@ $check = 'Checking...';
 
 parse_str($argv[1], $_GET);
 $port = $_GET['port'];
-$spin = exec("hdparm -C /dev/$port | grep 'active'");
+$spin = exec("hdparm -C /dev/$port|grep 'active'");
 $output = array();
 
 echo "<div class='label'><span class='left'>Attached to port: $port</span></div>";
@@ -21,8 +21,8 @@ echo "<table class='list'>";
 
 switch ($_GET['cmd']):
 case "IDENTITY":
-  exec("smartctl -i /dev/$port | awk 'NR>4'", &$output);
-  exec("smartctl -H /dev/$port | grep 'result' | sed 's/self-assessment test result//'", &$output);
+  exec("smartctl -i /dev/$port|awk 'NR>4'",$output);
+  exec("smartctl -H /dev/$port|grep 'result'|sed 's/self-assessment test result//'",$output);
   foreach ($output as $line):
     if (!strlen($line)) continue;
     $info = explode(':', $line, 2);
@@ -30,7 +30,7 @@ case "IDENTITY":
   endforeach;
   break;
 case "ATTRIBUTES":
-  exec("smartctl -A /dev/$port | awk 'NR>6'", &$output);
+  exec("smartctl -A /dev/$port|awk 'NR>6'",$output);
   $bold = count($output)<=2 ? "" : "font-weight:bold;";
   foreach ($output as $line):
     if (!$line) continue;
@@ -38,12 +38,12 @@ case "ATTRIBUTES":
     $color = "";
     if ($info[3]<=$info[5]):
       if (strtolower($info[6])=='pre-fail'):
-        $color = "background-color:#ff0000;color:white"; // red
+        $color = "background-color:#FF0000;color:#FFFFFF"; // red
       else:
-        $color = "background-color:#ff8080;color:white"; // pink
+        $color = "background-color:#EE6AA7;color:#FFFFFF"; // pink
       endif;
     elseif ($info[3]>$info[4]):
-      $color = "background-color:#ddddff;"; // purple
+      $color = "background-color:#EED2EE;color:#303030"; // purple
     endif;
     echo "<tr style='{$bold}{$color}'>";
     $bold = "";
@@ -59,7 +59,7 @@ case "ATTRIBUTES":
   endforeach;
   break;
 case "CAPABILITIES":
-  exec("smartctl -c /dev/$port | awk 'NR>4'", &$output);
+  exec("smartctl -c /dev/$port|awk 'NR>4'",$output);
   foreach ($output as $line):
     if (!$line) continue;
     $line = preg_replace('/^_/','__',preg_replace(array('/__+/','/_ +_/'),'_',str_replace(array(chr(9),')','('),'_',$line)));
@@ -68,7 +68,7 @@ case "CAPABILITIES":
   endforeach;
   break;
 case "TESTLOG":
-  exec("smartctl -l selftest /dev/$port | awk 'NR>5'", &$output);
+  exec("smartctl -l selftest /dev/$port|awk 'NR>5'",$output);
   if (strpos($output[0],'No self-tests')===0):
     echo "<tr><td>No self-tests logged on this disk</td></tr>";
     break;
@@ -87,7 +87,7 @@ case "TESTLOG":
   endforeach;
   break;
 case "ERRORLOG":
-  $output = shell_exec("smartctl -l error /dev/$port | awk 'NR>5'");
+  $output = shell_exec("smartctl -l error /dev/$port|awk 'NR>5'");
   if (strpos($output,'No Errors')===0):
     echo "<tr><td>No errors logged on this disk</td></tr>";
   else:

@@ -20,14 +20,14 @@ function PsExecute($command, $timeout = 20, $sleep = 2) {
   return false;
 }
 function PsEnded($pid) {
-  exec("ps -eo pid | grep $pid", $output);
+  exec("ps -eo pid|grep $pid",$output);
   foreach ($output as $list) if (trim($list)==$pid) return false;
   return true;
 }
 function PsKill($pid) {
   exec("kill -9 $pid");
 }
-preg_match_all("/root=(.*)\n/", file_get_contents("/etc/ssmtp_config.conf"), $mail);
+preg_match_all("/root=(.*)\n/", file_get_contents("/etc/ssmtp_config.conf"),$mail);
 $smtp = '/usr/sbin/ssmtp';
 $mail = trim($mail[1][0]);
 $text = "From: $mail
@@ -36,6 +36,6 @@ Subject: unRAID SMTP Test
 
 Dynamix SSMTP test message has arrived!
 ";
-$success = PsExecute("echo ".escapeshellarg($text)." | $smtp $mail");
+$success = PsExecute("echo ".escapeshellarg($text)."|$smtp $mail");
 echo "Test Result:<span class=".($success ? "'green'>Mail sent</span>" : "'red'>Failed</span>")."<br>Click <strong>Log</strong> button to view test result information.";
 ?>

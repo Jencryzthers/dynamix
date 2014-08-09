@@ -1,3 +1,4 @@
+#
 # sysstat.ioconf
 #
 #  Copyright (C) 2004, Red Hat, Inc.
@@ -5,43 +6,44 @@
 #  Maintained by Sebastien Godard (sysstat [at] orange.fr)
 #
 #  This file gives iostat and sadc a clue about how to find whole
-#  disk devices in /proc/partitions and /proc/diskstats
+#   disk devices in /proc/partitions and /proc/diskstats
 #  Authoritative source is: linux/Documentation/devices.txt
 #
 # line format, general record:
-# major:name:ctrlpre:ctrlno:devfmt:devcnt:partpre:partcnt:description
+#   major:name:ctrlpre:ctrlno:devfmt:devcnt:partpre:partcnt:description
 #
-#  major:       major # for device
-#  name:        base of device name
-#  ctrlpre:     string to use in generating controller designators
-#  eg:          the c in c0d2p6, decimal formatting implied
-#               '*' means none or irrelevant
-#  'x':         exception... record contains a specific name
-#               for a specific minor #, stored in the ctrlno field
-#  ctrlno:      which controller of this type is this
-#  devfmt:      type of device naming convention
-#  a:           alpha: xxa, xxb, ... xxaa, xxab, ... xxzz
-#  %string:     string to use in generating drive designators,
-#               eg: the 'd' in c0d2p6 , decimal formatting implied
-#  d:           no special translations (decimal formatting)
-#  devcnt:      how many whole devs per major number
-#  partpre:     appended to whole dev before part designator
-#               eg. the p in c0d2p6, decimal formatting implied
-#               '*' means none
-#  partcnt:     number of partitions per volume
-#               or minor # for exception records
-#  description: informative text
+#  major:		major # for device
+#  name:		base of device name
+#  ctrlpre:		string to use in generating controller designators
+#			 eg: the c in c0d2p6, decimal formatting implied
+#			'*' means none or irrelevant
+#			'x': exception... record contains a specific name
+#                       for a specific minor #, stored in the ctrlno field
+#  ctrlno:		which controller of this type is this
+#  devfmt:		type of device naming convention
+#	a:		alpha: xxa, xxb, ... xxaa, xxab, ... xxzz
+#	%string:	string to use in generating drive designators,
+#			 eg: the 'd' in c0d2p6 , decimal formatting implied
+#	d:		no special translations (decimal formatting)
+#  devcnt:		how many whole devs per major number
+#  partpre:         	appended to whole dev before part designator
+#                        eg. the p in c0d2p6, decimal formatting implied
+#			 '*' means none
+#  partcnt:		number of partitions per volume
+#			 or minor # for exception records
+#  description:		informative text
 #
 # line format, indirect record:
-# major:base_major:ctrlno[:[desc]]
+#   major:base_major:ctrlno[:[desc]]
 #
-#  major:       major number of the device
-#  base_major:  major number of the template for this type,
-#               0 for not supported
-#  ctrlno:      controller number of this type
-#  desc:        controller-specific description
-#               if absent the desc from base_major will be
-#               used in sprintf( buf, desc, ctrlno )
+#  major:		major number of the device
+#  base_major:		major number of the template for this type,
+#			 0 for not supported
+#  ctrlno:		controller number of this type
+#  desc:		controller-specific description
+#			if absent the desc from base_major will be
+#			 used in sprintf( buf, desc, ctrlno )
+
 
 1:ram:*:0:d:256:*:1:RAM disks (ram0..ram255)
 1:initrd:x:250:d:256:*:1:Initial RAM Disk (initrd)
@@ -63,7 +65,7 @@
 #4:0:0:NODEV
 #5:0:0:NODEV
 #6:0:0:NODEV
-7:loop:*:0:d:256:*:1:Loop Devices
+7:loop:*:0:d:256:*:1:Loop Devices 
 
 8:sd:*:0:a:16:*:16:SCSI - Controller %d
 65:8:1:
@@ -263,3 +265,4 @@
 
 # 240..254: LOCAL/Experimental
 # 255: reserved for big dev_t expansion
+

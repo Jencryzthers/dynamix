@@ -39,23 +39,23 @@ function device_info($disk) {
     if ($href != 'cache' && isset($disk['idx'])) {
       $cmd = "/root/mdcmd&arg1=spin{$action}&arg2={$disk['idx']}";
     } else {
-      $cmd = ($action=='up' ? "smartctl&arg1=-H" : "hdparm&arg1=-y")."&arg2=/dev/{$disk['device']}";
+      $cmd = "hdparm&arg1=".($action=='up' ? "S0" : "-y")."&arg2=/dev/{$disk['device']}";
     }
     $a = "<a href='update.htm?cmd={$cmd}&runCmd=Apply' class='info' target='progressFrame'>";
     $title = "Spin ".ucfirst($action);
     $spin_disk = "<img src='/plugins/webGui/images/$action.png' class='iconwide'>Spin $action disk<br>";
   }
   $ball = "/plugins/webGui/images/{$disk['color']}.png";
-  $state_down = strpos($disk['color'],'grey')===false ? "<img src='".str_replace('on','blink',$ball)."' class='icon'>Disk spun-down<br>" : "";
   if ($type != 'Flash') {
     $status = "{$a}
-    <img src='$ball' title='$title' class='icon'><span>
+    <img src='$ball' title='$title' class='icon' onclick=\"$.removeCookie('one',{path:'/'});\"><span>
     <img src='/plugins/webGui/images/green-on.png' class='icon'>Normal operation<br>
     <img src='/plugins/webGui/images/yellow-on.png' class='icon'>Invalid data content<br>
     <img src='/plugins/webGui/images/red-on.png' class='icon'>Disabled disk<br>
     <img src='/plugins/webGui/images/blue-on.png' class='icon'>New disk, not in array<br>
     <img src='/plugins/webGui/images/grey-off.png' class='icon'>No disk present<br>
-    {$state_down}{$spin_disk}</span></a>";
+    <img src='/plugins/webGui/images/green-blink.png' class='icon'>Disk spun-down<br>
+    {$spin_disk}</span></a>";
   } else {
     $status = "<img src='$ball' class='icon'>";
   }
@@ -64,7 +64,7 @@ function device_info($disk) {
 }
 function device_browse($disk) {
   global $path;
-  if ($disk['fsStatus'] == 'Mounted'):
+  if ($disk['fsStatus']=='Mounted'):
     $dir = $disk['name']=="flash" ? "/boot" : "/mnt/{$disk['name']}";
     return "<a href='$path/Browse?dir=$dir'><img src='/plugins/webGui/images/explore.png' title='Browse $dir'></a>";
   else:
@@ -92,7 +92,7 @@ function assignment($disk) {
   return $out;
 }
 function array_offline($disk) {
-  static $row = 0;
+  global $row;
   echo "<tr class='tr_row".($row^=1)."'>";
   switch ($disk['status']) {
   case "DISK_NP":
@@ -204,8 +204,7 @@ function array_offline($disk) {
   echo "</tr>";
 }
 function array_online($disk) {
-  global $temps, $counts, $fsSize, $fsUsed, $fsFree, $reads, $writes, $errors;
-  static $row = 0;
+  global $display, $temps, $counts, $fsSize, $fsUsed, $fsFree, $reads, $writes, $errors, $row;
   if (is_numeric($disk['temp'])) {
     $temps += $disk['temp'];
     $counts++;
@@ -219,12 +218,13 @@ function array_online($disk) {
     $fsFree += $disk['fsFree'];
     $fsUsed += $disk['fsUsed'];
   }
-  $none = $disk['name']=="parity" ? '-' : '';
+  $none = $disk['fsStatus']=="-" ? '-' : '';
   echo "<tr class='tr_row".($row^=1)."'>";
   switch ($disk['status']) {
   case "DISK_NP":
-    echo "<td>".device_info($disk)."</td>";
-    echo "<td colspan='9'>Not installed</td>";
+// Suppress empty slots to keep device list short
+//    echo "<td>".device_info($disk)."</td>";
+//    echo "<td colspan='9'>Not installed</td>";
   break;
   case "DISK_DSBL_NP":
     echo "<td>".device_info($disk)."</td>";
@@ -234,8 +234,25 @@ function array_online($disk) {
     echo "<td><em>Not installed</em></td>";
     echo "<td>-</td>";
     echo "<td><em>".my_scale($disk['sizeSb']*1024, $unit)." $unit</em></td>";
-    echo "<td><em>".($disk['fsStatus']=='Mounted' ? my_scale($disk['fsUsed']*1024, $unit)." $unit" : $none)."</em></td>";
-    echo "<td><em>".($disk['fsStatus']=='Mounted' ? my_scale($disk['fsFree']*1024, $unit)." $unit" : $disk['fsStatus'])."</em></td>";
+    if ($disk['fsStatus']=='Mounted') {
+      if ($display['text']) {
+        echo "<td><em>".my_scale($disk['fsUsed']*1024, $unit)." $unit</em></td>";
+        echo "<td><em>".my_scale($disk['fsFree']*1024, $unit)." $unit</em></td>";
+      } else {
+        $free = round(100*$disk['fsFree']/$disk['sizeSb']);
+        $used = 100-$free;
+        echo "<td><div class='usage-disk'><span style='margin:0;width:{$used}%'><span>".my_scale($disk['fsUsed']*1024, $unit)." $unit</span></span></div></td>";
+        echo "<td><div class='usage-disk'><span style='margin:0;width:{$free}%'><span>".my_scale($disk['fsFree']*1024, $unit)." $unit</span></span></div></td>";
+      }
+    } else {
+      if ($display['text']) {
+        echo "<td>{$none}</td>";
+        echo "<td>{$disk['fsStatus']}</td>";
+      } else {
+        echo "<td><div class='usage-disk'><span style='margin:0;width:0'><span>{$none}</span></span></div></td>";
+        echo "<td><div class='usage-disk'><span style='margin:0;width:0'><span>{$disk['fsStatus']}</span></span></div></td>";
+      }
+    }
     echo "<td>-</td>";
     echo "<td>-</td>";
     echo "<td>-</td>";
@@ -246,9 +263,26 @@ function array_online($disk) {
     echo "<td>".device_info($disk)."</td>";
     echo "<td>".device_desc($disk)."</td>";
     echo "<td>".my_temp($disk['temp'])."</td>";
-    echo "<td>".my_scale($disk['size']*1024, $unit)." $unit</td>";
-    echo "<td>".($disk['fsStatus']=='Mounted' ? my_scale($disk['fsUsed']*1024, $unit)." $unit" : $none)."</td>";
-    echo "<td>".($disk['fsStatus']=='Mounted' ? my_scale($disk['fsFree']*1024, $unit)." $unit" : $disk['fsStatus'])."</td>";
+    echo "<td>".my_scale($disk['sizeSb']*1024, $unit)." $unit</td>";
+    if ($disk['fsStatus']=='Mounted') {
+      if ($display['text']) {
+        echo "<td>".my_scale($disk['fsUsed']*1024, $unit)." $unit</td>";
+        echo "<td>".my_scale($disk['fsFree']*1024, $unit)." $unit</td>";
+      } else {
+        $free = round(100*$disk['fsFree']/$disk['sizeSb']);
+        $used = 100-$free;
+        echo "<td><div class='usage-disk'><span style='margin:0;width:{$used}%'><span>".my_scale($disk['fsUsed']*1024, $unit)." $unit</span></span></div></td>";
+        echo "<td><div class='usage-disk'><span style='margin:0;width:{$free}%'><span>".my_scale($disk['fsFree']*1024, $unit)." $unit</span></span></div></td>";
+      }
+    } else {
+      if ($display['text']) {
+        echo "<td>{$none}</td>";
+        echo "<td>{$disk['fsStatus']}</td>";
+      } else {
+        echo "<td><div class='usage-disk'><span style='margin:0;width:0'><span>{$none}</span></span></div></td>";
+        echo "<td><div class='usage-disk'><span style='margin:0;width:0'><span>{$disk['fsStatus']}</span></span></div></td>";
+      }
+    }
     echo "<td>".my_number($disk['numReads'])."</td>";
     echo "<td>".my_number($disk['numWrites'])."</td>";
     echo "<td>".my_number($disk['numErrors'])."</td>";
@@ -268,15 +302,22 @@ switch ($_GET['device']):
 case 'array':
   switch ($var['fsState']):
   case 'Started':
-    foreach ($disks as $disk) {if ($disk['name']!='flash' && $disk['name']!='cache') array_online(&$disk);}
+    foreach ($disks as $disk) {if ($disk['name']!='flash' && $disk['name']!='cache') array_online($disk);}
     if ($display['total']) {
       echo "<tr class='tr_last'>";
       echo "<td><img src='/plugins/webGui/images/sum.png' class='icon'>Total</td>";
-      echo "<td>Array of ".my_word($var['mdNumProtected'])." disks".($disks['parity']['idSb'] ? " (including parity disk)" : "")."</td>";
+      echo "<td>Array of ".my_word($var['mdNumProtected'])." disks (including parity disk)</td>";
       echo "<td>".($counts>0?my_temp(round($temps/$counts, 1)):'*')."</td>";
       echo "<td>".my_scale($fsSize*1024, $unit)." $unit</td>";
-      echo "<td>".my_scale($fsUsed*1024, $unit)." $unit</td>";
-      echo "<td>".my_scale($fsFree*1024, $unit)." $unit</td>";
+      if ($display['text']) {
+        echo "<td>".my_scale($fsUsed*1024, $unit)." $unit</td>";
+        echo "<td>".my_scale($fsFree*1024, $unit)." $unit</td>";
+      } else {
+        $free = round(100*$fsFree/$fsSize);
+        $used = 100-$free;
+        echo "<td><div class='usage-disk'><span style='margin:0;width:{$used}%'><span>".my_scale($fsUsed*1024, $unit)." $unit</span></span></div></td>";
+        echo "<td><div class='usage-disk'><span style='margin:0;width:{$free}%'><span>".my_scale($fsFree*1024, $unit)." $unit</span></span></div></td>";
+      }
       echo "<td>".my_number($reads)."</td>";
       echo "<td>".my_number($writes)."</td>";
       echo "<td>".my_number($errors)."</td>";
@@ -285,7 +326,7 @@ case 'array':
     }
   break;
   case 'Stopped':
-    foreach ($disks as $disk) {if ($disk['name']!='flash' && $disk['name']!='cache') array_offline(&$disk);}
+    foreach ($disks as $disk) {if ($disk['name']!='flash' && $disk['name']!='cache') array_offline($disk);}
   break;
   endswitch;
 break;
@@ -297,8 +338,15 @@ case 'flash':
   echo "<td>".device_desc($disk)."</td>";
   echo "<td>*</td>";
   echo "<td>".my_scale($disk['size']*1024, $unit)." $unit</td>";
-  echo "<td>".my_scale($disk['fsUsed']*1024, $unit)." $unit</td>";
-  echo "<td>".my_scale($disk['fsFree']*1024, $unit)." $unit</td>";
+  if ($display['text']) {
+    echo "<td>".my_scale($disk['fsUsed']*1024, $unit)." $unit</td>";
+    echo "<td>".my_scale($disk['fsFree']*1024, $unit)." $unit</td>";
+  } else {
+    $free = round(100*$disk['fsFree']/$disk['size']);
+    $used = 100-$free;
+    echo "<td><div class='usage-disk'><span style='margin:0;width:{$used}%'><span>".my_scale($disk['fsUsed']*1024, $unit)." $unit</span></span></div></td>";
+    echo "<td><div class='usage-disk'><span style='margin:0;width:{$free}%'><span>".my_scale($disk['fsFree']*1024, $unit)." $unit</span></span></div></td>";
+  }
   echo "<td>".$disk['numReads']."</td>";
   echo "<td>".$disk['numWrites']."</td>";
   echo "<td>".$disk['numErrors']."</td>";
@@ -306,7 +354,7 @@ case 'flash':
   echo "</tr>";
 break;
 case 'cache':
-  if ($var['fsState']=='Stopped') array_offline(&$disks['cache']); else array_online(&$disks['cache']);
+  if ($var['fsState']=='Stopped') array_offline($disks['cache']); else array_online($disks['cache']);
 break;
 case 'open':
   $status = file_exists("/var/log/plugins/dynamix.disk.preclear") ? '' : '_NP';

@@ -8,7 +8,7 @@
 ?>
 <?
 $plugin = 'dynamix.web.server';
-$ini = parse_ini_file("boot/config/plugins/dynamix/$plugin.cfg");
+$cfg = parse_ini_file("boot/config/plugins/dynamix/$plugin.cfg");
 
 $sName = "lighttpd";
 $fName = "/usr/sbin/$sName";
@@ -51,43 +51,43 @@ function checkPort(port) {
   <tr>
   <td>Web server function:</td>
   <td><select name="service" size="1" onChange="presetWEB(this.form)">
-<?=mk_option($ini['service'], "0", "Disabled")?>
-<?=mk_option($ini['service'], "1", "Enabled")?>
+<?=mk_option($cfg['service'], "0", "Disabled")?>
+<?=mk_option($cfg['service'], "1", "Enabled")?>
   </select></td>
   </tr>
   <tr>
   <td>Web root directory:</td>
-  <td><input type="text" name="path" value="<?=$ini['path']?>"></td>
+  <td><input type="text" name="path" value="<?=$cfg['path']?>"></td>
   </tr>
   <tr>
   <td>Listening port:</td>
-  <td><input type="text" name="port" value="<?=$ini['port']?>">Don't use port <?=$emhttp?></td>
+  <td><input type="text" name="port" value="<?=$cfg['port']?>">Don't use port <?=$emhttp?></td>
   </tr>
   <tr>
   <td>PHP error logging:</td>
   <td><select name="phpError" size="1">
-<?=mk_option($ini['phpError'], "Off", "Disabled")?>
-<?=mk_option($ini['phpError'], "On", "Enabled")?>
+<?=mk_option($cfg['phpError'], "Off", "Disabled")?>
+<?=mk_option($cfg['phpError'], "On", "Enabled")?>
   </select></td>
   </tr>
   <tr>
   <td>Error logging:</td>
   <td><select name="error" size="1">
-<?=mk_option($ini['error'], "0", "Disabled")?>
-<?=mk_option($ini['error'], "1", "Enabled")?>
+<?=mk_option($cfg['error'], "0", "Disabled")?>
+<?=mk_option($cfg['error'], "1", "Enabled")?>
   </select></td>
   </tr>
   <tr>
   <td>Access logging:</td>
   <td><select name="access" size="1">
-<?=mk_option($ini['access'], "0", "Disabled")?>
-<?=mk_option($ini['access'], "1", "Enabled")?>
+<?=mk_option($cfg['access'], "0", "Disabled")?>
+<?=mk_option($cfg['access'], "1", "Enabled")?>
   </select></td>
   </tr>
   <tr>
   <td><button type="button" onclick="resetWEB(this.form);">Default</button></td>
   <td><input type="submit" name="#apply" value="Apply"><button type="button" onclick="done();">Done</button></td>
   </tr>
+  <tr><td style="font-weight:normal;font-style:italic;font-size:smaller"><?=exec("$fName -v|awk '/^$sName/ {print $1}'|sed 's/\// version: /'")?> &bullet; <?=exec("php -v|awk '/^PHP/ {print $1,\"version:\",$2}'")?></td><td></td></tr>
 </table>
 </form>
-<div style="position:fixed;bottom:36px;font-style:italic;font-size:x-small"><?=exec("$fName -v|awk '/^$sName/ {print $1}'|sed 's/\// version: /'")?> &bullet; <?=exec("php -v|awk '/^PHP/ {print $1,\"version:\",$2}'")?></div>

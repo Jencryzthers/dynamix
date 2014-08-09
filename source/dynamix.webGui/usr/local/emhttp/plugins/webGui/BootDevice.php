@@ -24,4 +24,3 @@ $('#tab2').bind({click:function() {clearTimeout(timer); boot_status();}});
 <thead><tr><td>Device</td><td>Identification</td><td>Temp.</td><td>Size</td><td>Used</td><td>Free</td><td>Reads</td><td>Writes</td><td>Errors</td><td>View</td></tr></thead>
 <tbody id="boot_device"></tbody>
 </table>
-<br><input type="button" value="Refresh" onclick="refresh()">

@@ -23,40 +23,45 @@ case "SYSOVERVIEW":
   <td>unRAID Server <?=$_GET['regTy']?>, Version <?=$_GET['version']?></td>
   </tr>
   <tr><td>Motherboard:</td><td>
-<?exec("dmidecode -q -t 2 | awk -F: '/Manufacturer:/ {print $2}; /Product Name:/ {print $2}'", &$product);
+<?exec("dmidecode -q -t 2 | awk -F: '/Manufacturer:/ {print $2}; /Product Name:/ {print $2}'",$product);
   echo "{$product[0]} - {$product[1]}";
 ?></td></tr>
   <tr><td>Processor:</td><td>
-<?exec("dmidecode -q -t 4 | awk -F: '/Version:/ {print $2}; /Current Speed:/ {print $2}'", &$cpu);
-  $cpumodel = str_replace("Processor", "", $cpu[0]);
-  $cpuspeed = explode(' ',trim($cpu[1]));
-  if ($cpuspeed[0]>=1000 && $cpuspeed[1]=='MHz'):
-    $cpuspeed[0] /= 1000;
-    $cpuspeed[1] = 'GHz';
+<?exec("dmidecode -q -t 4 | awk -F: '/Version:/ {print $2};/Current Speed:/ {print $2}'",$cpu);
+  $cpumodel = str_replace(array("Processor","(C)","(R)","(TM)"),array("","&#169;","&#174;","&#8482;"),$cpu[0]);
+  if (strpos($cpumodel,'@')===false):
+    $cpuspeed = explode(' ',trim($cpu[1]));
+    if ($cpuspeed[0]>=1000 && $cpuspeed[1]=='MHz'):
+      $cpuspeed[0] /= 1000;
+      $cpuspeed[1] = 'GHz';
+    endif;
+    echo "$cpumodel @ {$cpuspeed[0]} {$cpuspeed[1]}";
+  else:
+    echo $cpumodel;
   endif;
-  echo "$cpumodel - {$cpuspeed[0]} {$cpuspeed[1]}";
 ?></td></tr>
   <tr><td>Cache:</td>
 <?$empty = true;
-  exec("dmidecode -q -t 7 | awk -F: '/Socket Designation:/ {print $2}; /Installed Size:/ {print $2}; /Maximum Size:/ {print $2}'", &$cache);
+  exec("dmidecode -q -t 7 | awk -F: '/Socket Designation:/ {print $2}; /Installed Size:/ {print $2}; /Maximum Size:/ {print $2}'",$cache);
+  $name = array();
   for ($i=0; $i<count($cache); $i+=3):
-    if ($cache[$i+1]!=' 0 kB') {
+    if ($cache[$i+1]!=' 0 kB' && !in_array($cache[$i],$name)) {
       if ($i>0) echo "<tr><td></td>";
       echo "<td>{$cache[$i]} = {$cache[$i+1]} (max. {$cache[$i+2]})</td></tr>";
+      $name[] = $cache[$i];
       $empty = false;
     }
   endfor;
   if ($empty) echo "</tr>";
 ?><tr><td>Memory:</td><td>
-<?$total = exec("dmidecode -q -t 17 | awk '/Size:/ {total+=$2;unit=$3} END {print total,unit}'");
-  $max = exec("dmidecode -q -t 16 | awk -F: '/Maximum Capacity:/ {print $2}'");
-  echo "$total (max. $max)</td></tr>";
-  exec("dmidecode -q -t 17 | awk -F: '/Bank Locator:/ {print $2}; /Size:/ {print $2}; /Speed:/ {print $2}'", &$memory);
-  for ($i=0; $i<count($memory); $i+=3):
+<?exec("dmidecode -q -t memory | awk -F: '/Maximum Capacity:/ {print $2};/Bank Locator:/ {print $2}; /Size:/ {total+=$2;print $2}; /^\tSpeed:/ {print $2} END {print total}'",$memory);
+  $total = array_pop($memory);
+  echo "$total MB (max. {$memory[0]})</td></tr>";
+  for ($i=1; $i<count($memory); $i+=3):
     if (strpos($memory[$i+1], 'No')===false) echo "<tr><td></td><td>{$memory[$i+1]} = {$memory[$i]}, {$memory[$i+2]}</td></tr>";
   endfor;
 ?><tr><td>Network:</td>
-<?exec("ifconfig -s | awk '$1~/[0-9]$/ {print $1}'", &$sPorts);
+<?exec("ifconfig -s | awk '$1~/[0-9]$/ {print $1}'",$sPorts);
   $i = 0;
   foreach ($sPorts as $port):
     if ($i++>0) echo "<tr><td></td>";
@@ -65,7 +70,7 @@ case "SYSOVERVIEW":
       echo "<td>$port: $mode</td></tr>";
     } else {
       unset($phy);
-      exec("ethtool $port | awk -F: '/Speed:/ {print $2}; /Duplex:/ {print $2}'", &$phy);
+      exec("ethtool $port | awk -F: '/Speed:/ {print $2}; /Duplex:/ {print $2}'",$phy);
       echo "<td>$port: {$phy[0]} - {$phy[1]} Duplex</td></tr>";
     }
   endforeach;
@@ -81,37 +86,37 @@ case "SYSOVERVIEW":
   </table>
 <?break;
 case "BIOS":
-  exec('dmidecode -q -t 0', &$output);
+  exec('dmidecode -q -t 0',$output);
   break;
 case "MOBOINFO":
-  exec('dmidecode -q -t 2', &$output);
+  exec('dmidecode -q -t 2',$output);
   break;
 case "CPUINFO":
-  exec('dmidecode -q -t 4', &$output);
+  exec('dmidecode -q -t 4',$output);
   break;
 case "CACHEINFO":
-  exec('dmidecode -q -t 7', &$output);
+  exec('dmidecode -q -t 7',$output);
   break;
 case "PORTINFO":
-  exec('dmidecode -q -t 8', &$output);
+  exec('dmidecode -q -t 8',$output);
   break;
 case "MEMARRAYINFO":
-  exec('dmidecode -q -t 16', &$output);
+  exec('dmidecode -q -t 16',$output);
   break;
 case "MEMDEVICE":
-  exec('dmidecode -q -t 17', &$output);
+  exec('dmidecode -q -t 17',$output);
   break;
 case "BOOTINFO":
-  exec('dmidecode -q -t 32', &$output);
+  exec('dmidecode -q -t 32',$output);
   break;
 case "ETHINFO":
   unset($sPorts);
-  exec("ifconfig -s | awk '$1~/[0-9]$/ {print $1}'", &$sPorts);
+  exec("ifconfig -s | awk '$1~/[0-9]$/ {print $1}'",$sPorts);
   foreach ($sPorts as $port):
     if ($port=='bond0'):
-      exec("cat /proc/net/bonding/$port | sed 's/Ethernet Channel Bonding.*/Port $port Information/'", &$output);
+      exec("cat /proc/net/bonding/$port | sed 's/Ethernet Channel Bonding.*/Port $port Information/'",$output);
     else:
-      exec("ethtool $port", &$output);
+      exec("ethtool $port",$output);
     endif;
   endforeach;
   break;
@@ -136,9 +141,9 @@ foreach ($output as $line):
   if (strpos($line, ':')):
     $info = explode(':',$line,2);
     echo "<tr><td>".trim($info[0]).":</td>";
-    $info[1] = trim($info[1]);
+    $info[1] = str_replace(array("Processor","(C)","(R)","(TM)"),array("","&#169;","&#174;","&#8482;"),trim($info[1]));
     if (strlen($info[1])):
-      echo "<td>$info[1]</td></tr>";
+      echo "<td>{$info[1]}</td></tr>";
     else:
       $join = true;
     endif;

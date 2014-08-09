@@ -73,7 +73,8 @@ foreach ($data as $line) {
   }
 }
 ?>
-<tr><td></td><td><input type="submit" name="#apply" value="Apply"><input type="button" id="test" value="Test"></td>
-<td id="testresult" style="font-size:13px;text-align:right">Test Result:<span class="orange">Unknown</span></td></tr>
+<tr><td></td><td><input type="submit" name="#apply" value="Apply"><button type="button" onclick="done();">Done</button></td>
+<td id="testresult" style="font-size:13px;text-align:right"><input type="button" id="test" value="Test">Test Result:<span class="orange">Unknown</span></td></tr>
+<tr><td style="font-weight:normal;font-style:italic;font-size:smaller"><?=exec("/usr/sbin/ssmtp -V 2>&1|awk '{print $1\" version: \"$2}'")?></td><td></td></tr>
 </table>
 </form>

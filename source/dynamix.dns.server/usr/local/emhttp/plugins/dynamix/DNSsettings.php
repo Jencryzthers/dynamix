@@ -8,7 +8,7 @@
 ?>
 <?
 $plugin = 'dynamix.dns.server';
-$ini = parse_ini_file("boot/config/plugins/dynamix/$plugin.cfg");
+$cfg = parse_ini_file("boot/config/plugins/dynamix/$plugin.cfg");
 $sName = "dnsmasq";
 $uName = ucfirst($sName);
 $fName = "/usr/sbin/$sName";
@@ -53,33 +53,33 @@ function checkDomain(service, domain) {
   <tr>
   <td>DNS server function:</td>
   <td><select name="service" size="1" onchange="presetDNS(this.form);">
-<?=mk_option($ini['service'], "0", "Disabled")?>
-<?=mk_option($ini['service'], "1", "Enabled")?>
+<?=mk_option($cfg['service'], "0", "Disabled")?>
+<?=mk_option($cfg['service'], "1", "Enabled")?>
   </select></td>
   </tr>
   <tr>
   <td>Domain name:</td>
-  <td><input type="text" name="domain" maxlength="200" value="<?=$ini['domain']?>">(e.g. mydomain.com)</td>
+  <td><input type="text" name="domain" maxlength="200" value="<?=$cfg['domain']?>">(e.g. mydomain.com)</td>
   </tr>
   <tr>
   <td>Set domain as local-only:</td>
   <td><select name="local" size="1">
-<?=mk_option($ini['local'], "0", "No")?>
-<?=mk_option($ini['local'], "1", "Yes")?>
+<?=mk_option($cfg['local'], "0", "No")?>
+<?=mk_option($cfg['local'], "1", "Yes")?>
   </select></td>
   </tr>
   <tr>
   <td>External DNS servers:</td>
-  <td><b><u>IP Address</u></b><br><textarea name="server" rows="2" columns="120" wrap="off"><?=urldecode($ini['server'])?></textarea></td>
+  <td><b><u>IP Address</u></b><br><textarea name="server" rows="2" columns="120" wrap="off"><?=urldecode($cfg['server'])?></textarea></td>
   </tr>
   <tr>
   <td>Local hosts:</td>
-  <td><b><u><span style="margin-right:50px">IP Address</span>Host Name</u></b><br><textarea name="host" rows="12" columns="120" wrap="off"><?=urldecode($ini['host'])?></textarea></td>
+  <td><b><u><span style="margin-right:50px">IP Address</span>Host Name</u></b><br><textarea name="host" rows="12" columns="120" wrap="off"><?=urldecode($cfg['host'])?></textarea></td>
   </tr>
   <tr>
   <td><button type="button" onclick="resetDNS(this.form);">Default</button></td>
   <td><input type="submit" name="#apply" value="Apply"><button type="button" onclick="done();">Done</button></td>
   </tr>
+  <tr><td style="font-weight:normal;font-style:italic;font-size:smaller"><?=exec("$fName -v|awk '/^$uName/ {print \"$sName version:\",$3;exit}'")?></td><td></td></tr>
 </table>
 </form>
-<div style="position:fixed;bottom:36px;font-style:italic;font-size:x-small"><?=exec("$fName -v|awk '/^$uName/ {print \"$sName version:\",$3;exit}'")?></div>

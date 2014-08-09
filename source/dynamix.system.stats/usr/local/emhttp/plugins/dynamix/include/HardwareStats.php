@@ -8,13 +8,13 @@
 ?>
 <?
 parse_str($argv[1], $_GET);
-$rom = "boot/config/plugins/dynamix";
-$images = "plugins/dynamix/images";
 
 switch ($_GET['type']) {
 case 'sum':
+  $rom = "boot/config/plugins/dynamix";
+  $images = "plugins/dynamix/images";
   $disks = parse_ini_file("state/disks.ini",true);
-  $ini = parse_ini_file("$rom/{$_GET['plugin']}.cfg");
+  $cfg = parse_ini_file("$rom/{$_GET['plugin']}.cfg");
   $dynamix = parse_ini_file("$rom/dynamix.webGui.cfg",true);
   $display = &$dynamix['display'];
   $data = array();
@@ -28,9 +28,9 @@ case 'sum':
   $arrayused = $arraysize-$arrayfree;
   $freepercent = round(100*$arrayfree/$arraysize);
   $arraypercent = 100-$freepercent;
-  $data[] = "totalbar ".bar_color($arraypercent)." align-left";
+  $data[] = "mybar ".bar_color($arraypercent)." align-left";
   $data[] = "$arraypercent%";
-  $data[] = "totalbar ".bar_color($arraypercent)." inside";
+  $data[] = "mybar ".bar_color($arraypercent)." inside";
   $data[] = "<strong>".my_scale($arrayused, $unit)." $unit <img src='/$images/arrow.png' style='margin-top:-3px'> $arraypercent%</strong><br><small>Total Space Used</small>";
   $data[] = "<strong>".my_scale($arrayfree, $unit)." $unit <img src='/$images/arrow.png' style='margin-top:-3px'> $freepercent%</strong><br><small>Available for Data</small>";
   echo implode(';',$data);
@@ -43,7 +43,7 @@ case 'sys':
   $output = array();
   $json = array();
   foreach ($disks as $disk) {
-    if ($disk['name']!='parity') {
+    if ($disk['name']!='parity' && $disk['status']=='DISK_OK') {
       $size = ($disk['name']=='flash'?$disk['size']:$disk['sizeSb'])*1024;
       $free = $disk['fsFree']*1024;
       $percent = 100-round(100*$free/$size);
@@ -59,39 +59,39 @@ case 'sys':
   foreach ($series as $label) $json[] = '"'.$label.'":['.implode(',', $output[$label]).']';
   echo '{'.implode(',', $json).'}';
   exit;
-case 'rtp':
+case 'rts':
   $cpu = '$2=="all"';
   $hdd = '$2=="tps"';
   $ram = '$2=="kbmemfree"';
   $com = '$2=="'.$_GET['port'].'"';
   $read = "sar 1 1 -u -b -r -n DEV|grep '^Average'|awk '$cpu {print $3+$4,$5}; $hdd {getline;print $5,$6}; $ram {getline;print $2,$5+$6,$3-$5-$6}; $com {print $5,$6}'";
   $data = array();
-  exec($read, &$data);
+  exec($read,$data);
   echo implode(' ', $data);
   exit;
 case 'cpu':
   $series = array('User','System');
   $data = '$5+$6,$7';
   $sadf = '';
-  $mask = '';
+  $mask = ' && $5<=100 && $6<=100 && $7<=100';
   break;
 case 'ram':
   $series = array('Free','Cached','Used');
   $data = '$4,$7+$8,$5-$7-$8';
   $sadf = '-- -r';
-  $mask = '';
+  $mask = ' && $4<100000000000 && $5<100000000000 && $7<100000000000 && $8<100000000000';
   break;
 case 'com':
   $series = array('Receive','Transmit');
   $data = '$7,$8';
   $sadf = '-- -n DEV';
-  $mask = ' && $4=="'.$_GET['port'].'"';
+  $mask = ' && $4=="'.$_GET['port'].'" && $7<100000000000 && $8<100000000000';
   break;
 case 'hdd':
   $series = array('Read','Write');
   $data = '$7,$8';
   $sadf = '-- -b';
-  $mask = '';
+  $mask = ' && $7<100000000000 && $8<100000000000';
   break;
 }
 $input = array();
@@ -113,7 +113,7 @@ if ($graph>0) {
   $valid = '$2~/^[0-9]/ && $3>='.((floor(time()/86400)-$graph)*86400).$mask;
   usort($logs, create_function('$a,$b', 'return filemtime($a)-filemtime($b);'));
   foreach ($logs as $log) {
-    if ($days<=$graph) exec("sadf -d -T $interval $log $sadf|awk -F';' '$valid {print $3,$data}'", &$input);
+    if ($days<=$graph) exec("sadf -d -U $interval $log $sadf|awk -F';' '$valid {print $3,$data}'",$input);
     $days--;
   }
   sort($input);
@@ -146,10 +146,13 @@ function my_scale($value, &$unit, $precision = NULL) {
   }
 }
 function bar_color($val) {
-  global $ini;
+  global $cfg;
   switch (true) {
-  case ($val>=$ini['critical']): return "redbar";
-  case ($val>=$ini['warning']): return "yellowbar";
-  default: return "greenbar";}
+  case ($val>=$cfg['critical']):
+    return "redbar";
+  case ($val>=$cfg['warning']):
+    return "orangebar";
+  default:
+    return "greenbar";}
 }
 ?>

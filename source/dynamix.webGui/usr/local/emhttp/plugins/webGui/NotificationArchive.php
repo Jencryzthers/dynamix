@@ -8,27 +8,31 @@
 /* Adapted by Bergware International (December 2013) */
 ?>
 <table class="share_status small">
-<tr><td>Importance</td><td>Time</td><td>Plugin</td><td>Title</td><td>Description</td></tr>
+<thead><tr><td>Importance</td><td>Time</td><td>Plugin</td><td>Title</td><td>Description</td></tr></thead>
+<tbody>
 <?
-$path = $ini['path'];
+$path = $notify['path'];
 $files = glob("$path/archive/*.notify");
-$datetime = $ini['date'].' '.$ini['time'];
+$datetime = $notify['date'].' '.$notify['time'];
 
-if (!empty($files)) {
+if (empty($files)) {
+  echo "<tr><td colspan='5' style='text-align:center'><em>No notifications available</em></td></tr>";
+} else {
   foreach($files as $file) {
     $ini_array[$i] = parse_ini_file($file);
     $ini_array[$i]['timestamp'] = date($datetime, $ini_array[$i]['timestamp']);
-    echo '<tr>';
-    echo '<td>'.$ini_array[$i]['importance'].'</td>';
-    echo '<td>'.$ini_array[$i]['timestamp'].'</td>';
-    echo '<td>'.$ini_array[$i]['plugin'].'</td>';
-    echo '<td>'.$ini_array[$i]['subject'].'</td>';
-    echo '<td>'.$ini_array[$i]['description'].'</td>';
-    echo '</tr>';
+    echo "<tr>";
+    echo "<td>{$ini_array[$i]['importance']}</td>";
+    echo "<td>{$ini_array[$i]['timestamp']}</td>";
+    echo "<td>{$ini_array[$i]['plugin']}</td>";
+    echo "<td>{$ini_array[$i]['subject']}</td>";
+    echo "<td>{$ini_array[$i]['description']}</td>";
+    echo "</tr>";
     $i++;
   }
-} else {
-  echo '<tr><td></td><td colspan="4">No notifications available</td></tr>';
 }
 ?>
+</tbody>
 </table>
+<br>
+<button type="button" onclick="done();">Done</button>

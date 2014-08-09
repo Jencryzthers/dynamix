@@ -13,6 +13,10 @@ $(function() {
 });
 function prepareDisplay(form) {
   if (!form.number.value) form.number.value='.,';
+<?if ($display['unit']=='F'):?>
+  form.hot.value = Math.round(5/9*(form.hot.value-32));
+  form.max.value = Math.round(5/9*(form.max.value-32));
+<?endif;?>
 }
 function presetTime(form) {
   form.time.disabled = form.date.value=='%c';
@@ -23,6 +27,7 @@ function presetSnow(form) {
   form.snow.disabled = plain;
 }
 function resetDisplay(form) {
+  form.tabs.selectedIndex = 0;
   form.date.selectedIndex = 0;
   form.time.selectedIndex = 1;
   form.time.disabled = true;
@@ -105,6 +110,13 @@ function resetDisplay(form) {
   </select></td>
   </tr>
   <tr>
+  <td>Used / Free columns:</td>
+  <td><select name="text" size="1">
+<?=mk_option($display['text'], "1", "Text")?>
+<?=mk_option($display['text'], "0", "Graphic")?>
+  </select></td>
+  </tr>
+  <tr>
   <td>Table view spacing:</td>
   <td><select name="view" size="1">
 <?=mk_option($display['view'], "", "Normal")?>
@@ -127,6 +139,27 @@ function resetDisplay(form) {
   </select></td>
   </tr>
   <tr>
+  <td>Show settings page as tabbed view:</td>
+  <td><select name="tabs" size="1">
+<?=mk_option($display['tabs'], "0", "No")?>
+<?=mk_option($display['tabs'], "1", "Yes")?>
+  </select></td>
+  </tr>
+  <tr>
+  <td>Show array utilization indicator:</td>
+  <td><select name="usage" size="1">
+<?=mk_option($display['usage'], "0", "No")?>
+<?=mk_option($display['usage'], "1", "Yes")?>
+  </select></td>
+  </tr>
+  <tr>
+  <td>Show section icons:</td>
+  <td><select name="icons" size="1">
+<?=mk_option($display['icons'], "", "No")?>
+<?=mk_option($display['icons'], "1", "Yes")?>
+  </select></td>
+  </tr>
+  <tr>
   <td>Show banner image:</td>
   <td><select name="banner" size="1" onchange="presetSnow(this.form);">
 <?=mk_option($display['banner'], "", "No")?>
@@ -141,11 +174,19 @@ function resetDisplay(form) {
   </select></td>
   </tr>
   <tr>
-  <td>Show section icons:</td>
-  <td><select name="icons" size="1">
-<?=mk_option($display['icons'], "", "No")?>
-<?=mk_option($display['icons'], "1", "Yes")?>
+  <td>Dynamix color theme:</td>
+  <td><select name="theme" size="1">
+<?=mk_option($display['theme'], "white", "White")?>
+<?=mk_option($display['theme'], "black", "Black")?>
   </select></td>
+  </tr>
+  <tr>
+  <td>Warning disk temperature threshold (&deg;<?=$display['unit']?>):</td>
+  <td><input type="text" name="hot" class="narrow" maxlength="2" value="<?=$display['unit']=='C'?$display['hot']:round(9/5*$display['hot']+32)?>"></td>
+  </tr>
+  <tr>
+  <td>Critical disk temperature threshold (&deg;<?=$display['unit']?>):</td>
+  <td><input type="text" name="max" class="narrow" maxlength="2" value="<?=$display['unit']=='C'?$display['max']:round(9/5*$display['max']+32)?>"></td>
   </tr>
   <tr>
   <td>Real-time page updates:</td>

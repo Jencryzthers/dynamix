@@ -8,8 +8,8 @@
 ?>
 <?
 // Go to sleep
-exec("echo 'Enter sleep mode' | logger");
-exec("echo -n mem > /sys/power/state");
+exec("echo 'Enter sleep mode'|logger");
+exec("echo -n mem >/sys/power/state");
 // Now sleeping...
-exec("echo 'Wake-up from sleep mode' | logger");
+exec("echo 'Wake-up from sleep mode'|logger");
 ?>

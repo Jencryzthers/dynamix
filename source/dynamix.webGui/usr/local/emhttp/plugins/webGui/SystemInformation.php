@@ -8,10 +8,9 @@
 ?>
 <?
 $var = parse_ini_file('state/var.ini');
-ini_set('display_errors', 0);
 ?>
-<link type="text/css" rel="stylesheet" href="/plugins/webGui/fonts/dynamix.css">
-<link type="text/css" rel="stylesheet" href="/plugins/webGui/styles/template.css">
+<link type="text/css" rel="stylesheet" href="/plugins/webGui/fonts/dynamix-white.css">
+<link type="text/css" rel="stylesheet" href="/plugins/webGui/styles/template-white.css">
 
 <script>
 // server uptime & update period
@@ -33,15 +32,14 @@ function updateTime() {
 
 <body onLoad="updateTime()" style="margin-top:20px">
 <center>
-<img src="/plugins/webGui/images/logo.png" alt="unRAID" width="169" height="28" border="0" /><br>
+<img src="/plugins/webGui/images/logo-white.png" alt="unRAID" width="169" height="28" border="0" /><br>
 <span style="font-size:18px;color:#6FA239;font-weight:bold">unRAID Server <?=$var['regTy']?></span><br>
 </center>
-<div style="margin-top:14px;font-size:12px;line-height:30px;color:#333333;margin-left:40px;">
+<div style="margin-top:14px;font-size:12px;line-height:30px;color:#303030;margin-left:40px;">
 <div style="margin-top:20px;"><span style="width:90px;display:inline-block"><strong>System:</strong></span>
 <?
-$motherboard = exec("dmidecode -q -t 2 | awk -F: '/Manufacturer:/ {print $2}'");
-$product = exec("dmidecode -q -t 2 | awk -F: '/Product Name:/ {print $2}'");
-echo "$motherboard - $product";
+exec("dmidecode -q -t 2 | awk -F: '/Manufacturer:/ {print $2}; /Product Name:/ {print $2}'", $product);
+echo "{$product[0]} - {$product[1]}";
 ?>
 </div>
 <div><span style="width:90px; display:inline-block"><strong>CPU:</strong></span>
@@ -50,47 +48,55 @@ function write($number) {
   $words = array('zero','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen','twenty');
   return $number<=count($words) ? $words[$number] : $number;
 }
-$cpumodel = str_replace("Processor", "", exec("dmidecode -q -t 4 | awk -F: '/Version:/ {print $2}'"));
-$cpuspeed = explode(' ',trim(exec("dmidecode -q -t 4 | awk -F: '/Current Speed:/ {print $2}'")));
-if ($cpuspeed[0]>=1000 && $cpuspeed[1]=='MHz'):
-  $cpuspeed[0] /= 1000;
-  $cpuspeed[1] = 'GHz';
+exec("dmidecode -q -t 4 | awk -F: '/Version:/ {print $2};/Current Speed:/ {print $2}'",$cpu);
+$cpumodel = str_replace(array("Processor","(C)","(R)","(TM)"),array("","&#169;","&#174;","&#8482;"),$cpu[0]);
+if (strpos($cpumodel,'@')===false):
+  $cpuspeed = explode(' ',trim($cpu[1]));
+  if ($cpuspeed[0]>=1000 && $cpuspeed[1]=='MHz'):
+    $cpuspeed[0] /= 1000;
+    $cpuspeed[1] = 'GHz';
+  endif;
+  echo "$cpumodel @ {$cpuspeed[0]} {$cpuspeed[1]}";
+else:
+  echo $cpumodel;
 endif;
-echo "$cpumodel - $cpuspeed[0] $cpuspeed[1]";
 ?>
 </div>
 <div><span style="width:90px; display:inline-block"><strong>Cache:</strong></span>
 <?
-unset($cachesize);
-exec("dmidecode -q -t 7 | awk -F: '/Installed Size:/ {print $2}'", &$cachesize);
-$cache = array();
-foreach ($cachesize as $size) if ($size!=' 0 kB') $cache[] = $size;
-echo implode(',', $cache);
+exec("dmidecode -q -t 7 | awk -F: '/Socket Designation:/ {print $2}; /Installed Size:/ {print $2}'",$cache);
+$name = array();
+$size = "";
+for ($i=0; $i<count($cache); $i+=2):
+  if ($cache[$i+1]!=' 0 kB' && !in_array($cache[$i],$name)):
+    if ($size) $size .= ', ';
+    $size .= $cache[$i+1];
+    $name[] = $cache[$i];
+  endif;
+endfor;
+echo $size;
 ?>
 </div>
 <div><span style="width:90px; display:inline-block"><strong>Memory:</strong></span>
 <?
-$memory = exec("dmidecode -q -t 17 | awk '/Size:/ {total+=$2;unit=$3} END {print total,unit}'");
-$total = exec("dmidecode -q -t 16 | awk -F: '/Maximum Capacity:/ {print $2}'");
-echo "$memory (max. $total)";
+exec("dmidecode -q -t memory | awk -F: '/Maximum Capacity:/ {print $2}; /Size:/ {total+=$2} END {print total}'",$memory);
+echo "{$memory[1]} MB (max. {$memory[0]})";
 ?>
 </div>
 <div><span style="width:90px; display:inline-block"><strong>Network:</strong></span>
 <?
-unset($sPorts);
-exec("ifconfig -s | awk '$1~/[0-9]$/ {print $1}'", &$sPorts);
+exec("ifconfig -s | awk '$1~/[0-9]$/ {print $1}'", $sPorts);
 $i = 0;
 foreach ($sPorts as $port):
-  if ($i>0) echo "<br><span style='width:94px; display:inline-block'>&nbsp;</span>";
+  if ($i++>0) echo "<br><span style='width:94px; display:inline-block'>&nbsp;</span>";
   if ($port=='bond0'):
     $mode = exec("cat /proc/net/bonding/$port | grep 'Mode:' | cut -d: -f2");
     echo "$port: $mode";
   else:
     unset($phy);
-    exec("ethtool $port | awk -F: '/Speed:/ {print $2}; /Duplex:/ {print $2}'", &$phy);
+    exec("ethtool $port | awk -F: '/Speed:/ {print $2}; /Duplex:/ {print $2}'", $phy);
     echo "$port: {$phy[0]} - {$phy[1]} Duplex";
   endif;
-  $i++;
 endforeach;
 ?>
 </div>

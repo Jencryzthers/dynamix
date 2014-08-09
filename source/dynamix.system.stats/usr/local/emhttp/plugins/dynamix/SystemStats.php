@@ -14,7 +14,7 @@ endif;
 
 function selector() {
   global $graph, $frame;
-  echo "<span id='selector' class='status' style='display:none'><span><select size='1' onchange='modeller(this.value)'>";
+  echo "<span id='selector' class='status' style='display:none;margin-top:-4px;margin-right:-4px'><span><select size='1' onchange='modeller(this.value)'>";
   echo mk_option($graph, '0', 'Real-time');
   echo mk_option($graph, '1', 'Last day');
   echo mk_option($graph, '2', 'Last 2 days');
@@ -40,14 +40,14 @@ function selector() {
 $('.tabs').append("<?=selector()?>");
 </script>
 <?if (strpos($show,'cpu')!==false):?>
-<span id='cpu' class='graph<?=$ini['cols']?3:2?>'></span>
+<span id='cpu' class='graph<?=$cfg['cols']?3:2?>'></span>
 <?endif;?>
 <?if (strpos($show,'ram')!==false):?>
-<span id='ram' class='graph<?=$ini['cols']?3:2?>'></span>
+<span id='ram' class='graph<?=$cfg['cols']?3:2?>'></span>
 <?endif;?>
 <?if (strpos($show,'com')!==false):?>
-<span id='com' class='graph<?=$ini['cols']?3:2?>'></span>
+<span id='com' class='graph<?=$cfg['cols']?3:2?>'></span>
 <?endif;?>
 <?if (strpos($show,'hdd')!==false):?>
-<span id='hdd' class='graph<?=$ini['cols']?3:2?>'></span>
+<span id='hdd' class='graph<?=$cfg['cols']?3:2?>'></span>
 <?endif;?>
