@@ -13,10 +13,10 @@ $(function() {
 });
 function prepareDisplay(form) {
   if (!form.number.value) form.number.value='.,';
-<?if ($display['unit']=='F'):?>
-  form.hot.value = Math.round(5/9*(form.hot.value-32));
-  form.max.value = Math.round(5/9*(form.max.value-32));
-<?endif;?>
+  if (form.unit.selectedIndex==1) {
+    form.hot.value = Math.round(5/9*(form.hot.value-32));
+    form.max.value = Math.round(5/9*(form.max.value-32));
+  }
 }
 function presetTime(form) {
   form.time.disabled = form.date.value=='%c';
@@ -25,6 +25,21 @@ function presetSnow(form) {
   var plain = form.banner.value=='';
   if (plain) form.snow.value = 0;
   form.snow.disabled = plain;
+}
+function presetTemp(form) {
+  var hot = document.getElementById('hot').innerHTML;
+  var max = document.getElementById('max').innerHTML;
+  if (form.unit.selectedIndex==0) {;
+    form.hot.value = Math.round(5/9*(form.hot.value-32));
+    form.max.value = Math.round(5/9*(form.max.value-32));
+	document.getElementById('hot').innerHTML = hot.replace('F)','C)');
+	document.getElementById('max').innerHTML = max.replace('F)','C)');
+  } else {
+    form.hot.value = Math.round((9/5*form.hot.value)+32);
+    form.max.value = Math.round((9/5*form.max.value)+32);
+	document.getElementById('hot').innerHTML = hot.replace('C)','F)');
+	document.getElementById('max').innerHTML = max.replace('C)','F)');
+  }
 }
 function resetDisplay(form) {
   form.tabs.selectedIndex = 0;
@@ -84,7 +99,7 @@ function resetDisplay(form) {
   </tr>
   <tr>
   <td>Temperature unit:</td>
-  <td><select name="unit" size="1">
+  <td><select name="unit" size="1" onchange="presetTemp(this.form);">
 <?=mk_option($display['unit'], "C", "Celsius")?>
 <?=mk_option($display['unit'], "F", "Fahrenheit")?>
   </select></td>
@@ -181,12 +196,12 @@ function resetDisplay(form) {
   </select></td>
   </tr>
   <tr>
-  <td>Warning disk temperature threshold (&deg;<?=$display['unit']?>):</td>
-  <td><input type="text" name="hot" class="narrow" maxlength="2" value="<?=$display['unit']=='C'?$display['hot']:round(9/5*$display['hot']+32)?>"></td>
+  <td id="hot">Warning disk temperature threshold (&deg;<?=$display['unit']?>):</td>
+  <td><input type="text" name="hot" class="narrow" maxlength="3" value="<?=$display['unit']=='C'?$display['hot']:round(9/5*$display['hot']+32)?>"></td>
   </tr>
   <tr>
-  <td>Critical disk temperature threshold (&deg;<?=$display['unit']?>):</td>
-  <td><input type="text" name="max" class="narrow" maxlength="2" value="<?=$display['unit']=='C'?$display['max']:round(9/5*$display['max']+32)?>"></td>
+  <td id="max">Critical disk temperature threshold (&deg;<?=$display['unit']?>):</td>
+  <td><input type="text" name="max" class="narrow" maxlength="3" value="<?=$display['unit']=='C'?$display['max']:round(9/5*$display['max']+32)?>"></td>
   </tr>
   <tr>
   <td>Real-time page updates:</td>

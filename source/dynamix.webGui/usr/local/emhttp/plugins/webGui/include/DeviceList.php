@@ -67,8 +67,6 @@ function device_browse($disk) {
   if ($disk['fsStatus']=='Mounted'):
     $dir = $disk['name']=="flash" ? "/boot" : "/mnt/{$disk['name']}";
     return "<a href='$path/Browse?dir=$dir'><img src='/plugins/webGui/images/explore.png' title='Browse $dir'></a>";
-  else:
-    return "<img src='/plugins/webGui/images/noview.png'>";
   endif;
 }
 function device_desc($disk) {
@@ -218,7 +216,6 @@ function array_online($disk) {
     $fsFree += $disk['fsFree'];
     $fsUsed += $disk['fsUsed'];
   }
-  $none = $disk['fsStatus']=="-" ? '-' : '';
   echo "<tr class='tr_row".($row^=1)."'>";
   switch ($disk['status']) {
   case "DISK_NP":
@@ -246,10 +243,10 @@ function array_online($disk) {
       }
     } else {
       if ($display['text']) {
-        echo "<td>{$none}</td>";
+        echo "<td></td>";
         echo "<td>{$disk['fsStatus']}</td>";
       } else {
-        echo "<td><div class='usage-disk'><span style='margin:0;width:0'><span>{$none}</span></span></div></td>";
+        echo "<td><div class='usage-disk'><span style='margin:0;width:0'></span></div></td>";
         echo "<td><div class='usage-disk'><span style='margin:0;width:0'><span>{$disk['fsStatus']}</span></span></div></td>";
       }
     }
@@ -276,10 +273,10 @@ function array_online($disk) {
       }
     } else {
       if ($display['text']) {
-        echo "<td>{$none}</td>";
-        echo "<td>{$disk['fsStatus']}</td>";
+        echo $disk['name']=="parity" ? "<td>-</td><td>-</td>" : "<td></td><td>{$disk['fsStatus']}</td>";
       } else {
-        echo "<td><div class='usage-disk'><span style='margin:0;width:0'><span>{$none}</span></span></div></td>";
+        echo "<td><div class='usage-disk'><span style='margin:0;width:0'></span></div></td>";
+		if ($disk['name']=="parity") $disk['fsStatus'] = '';
         echo "<td><div class='usage-disk'><span style='margin:0;width:0'><span>{$disk['fsStatus']}</span></span></div></td>";
       }
     }
