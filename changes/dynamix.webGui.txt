@@ -2,6 +2,7 @@ Release notes v2.2.5
 ====================
 Fixed: wrong average speed calculation of parity check when longer than 1 day
 Fixed: system information
+Fixed: some regression errors
 Changed: compressed display of CPU core speeds in dashboard
 
 
