@@ -1,10 +1,17 @@
+Release notes v2.2.6
+====================
+Added: number of active streams on dashboard
+Added: additional views for network parameters on dashboard
+Added: alternating text/image heat-alarm on dashboard
+Fixed: minor css errors
+Fixed: minor regression errors
+
 Release notes v2.2.5
 ====================
 Fixed: wrong average speed calculation of parity check when longer than 1 day
 Fixed: system information
 Fixed: some regression errors
 Changed: compressed display of CPU core speeds in dashboard
-
 
 Release notes v2.2.4
 ====================
