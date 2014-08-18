@@ -6,6 +6,8 @@
 
 *Starting from version 2.1.0 there is code alignment with the 64-bit version which is released separately.*
 
+*Starting from version 2.2.1 the new dashboard page is added to the GUI.*
+
 
 #### Introduction
 
