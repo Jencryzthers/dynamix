@@ -141,6 +141,10 @@ The Browser function has been rewritten for improved speed and visibility of dup
 
 ![](/screenshots/duplicates.png)
 
+The dashboard page gives you an instant overview of your system status. Screen updates happen in real-time.
+
+![](/screenshots/dashboard.png)
+
 The optional "plugin control" module allows for easy installation, updating and uninstallation of all of the available Dynamix plugins via the GUI. This way maintaining your plugins becomes a breeze!
 
 ![](/screenshots/plugin-control.png)
