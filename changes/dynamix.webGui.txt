@@ -1,3 +1,11 @@
+Release notes v2.2.7
+====================
+Added: security and export settings in shares list
+Added: page update timer option (fast, regular, slow)
+Added: hourly mover schedule
+Fixed: display settings page
+Fixed: share edit warning
+
 Release notes v2.2.6
 ====================
 Added: number of active streams on dashboard
