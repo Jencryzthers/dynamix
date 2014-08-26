@@ -11,7 +11,7 @@
 <!ENTITY reg "/var/log/plugins">
 <!ENTITY src "https://raw.github.com/bergware/dynamix/master/download">
 <!ENTITY url "http://slackware.cs.utah.edu/pub/slackware">
-<!ENTITY dir "13.1">    <!-- select slackware version for packages, see list below -->
+<!ENTITY dir "13.37">   <!-- select slackware version for packages, see list below -->
 <!ENTITY prune "false"> <!-- set prune to "true" to activate pruning -->
 ]>
 
