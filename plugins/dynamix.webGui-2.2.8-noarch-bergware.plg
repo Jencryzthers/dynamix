@@ -196,6 +196,8 @@ wget --no-check-certificate -q -O $plugin &pwr;/powerdown.plg
 if [ -f $plugin ]; then
   installplg $plugin
   rm -f $plugin
+else
+  echo "Installation of powerdown failed."
 fi
 
 # Update file access mode
