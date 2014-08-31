@@ -1,3 +1,8 @@
+Release notes v2.1.2
+====================
+- Added: warning when user enters password with # character
+- Fixed: unRAID notification system
+
 Release notes v2.1.1
 ====================
 Updated: openssl version

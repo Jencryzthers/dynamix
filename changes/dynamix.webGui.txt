@@ -1,3 +1,13 @@
+Release notes v2.2.8
+====================
+Added: page refresh timer indication
+Added: notifications on critical disk issues
+Added: notification when a new plugin version is available
+Added: share list filtering based on global share settings
+Fixed: corrections/improvements in notification system
+Fixed: status and temperature display of unassigned devices
+Updated: revised installation of Powerdown plugin
+
 Release notes v2.2.7
 ====================
 Added: security and export settings in shares list

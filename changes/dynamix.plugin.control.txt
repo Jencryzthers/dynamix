@@ -1,3 +1,8 @@
+Release notes v2.1.2
+====================
+Added: notification when new plugin version available
+Added: possibility to hide (unused) plugins
+
 Release notes v2.1.1
 ====================
 Changed: css coding
