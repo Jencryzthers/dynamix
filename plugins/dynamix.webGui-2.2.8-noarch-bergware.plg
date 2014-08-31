@@ -194,7 +194,7 @@ fi
 plugin=/tmp/powerdown.plg
 wget --no-check-certificate -q -O $plugin &pwr;/powerdown.plg
 if [ -f $plugin ]; then
-  installplg $plugin
+  /usr/local/sbin/installplg $plugin
   rm -f $plugin
 else
   echo "Installation of powerdown plugin failed."
