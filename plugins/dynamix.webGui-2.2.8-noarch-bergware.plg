@@ -197,7 +197,7 @@ if [ -f $plugin ]; then
   installplg $plugin
   rm -f $plugin
 else
-  echo "Installation of powerdown failed."
+  echo "Installation of powerdown plugin failed."
 fi
 
 # Update file access mode
