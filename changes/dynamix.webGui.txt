@@ -1,9 +1,14 @@
-Release notes v2.2.9
+Release notes v2.2.10
 ====================
 Added: DOWNLOAD button on syslog viewer page
 Added: DONE button on various utils pages
+Changed: smarter notifications system
 Fixed: high load in cpu indicator on dashboard page
 Fixed: minor css adjustments
+
+Release notes v2.2.9
+====================
+Not released
 
 Release notes v2.2.8
 ====================
