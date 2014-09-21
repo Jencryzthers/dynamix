@@ -94,7 +94,6 @@ fi
 rm -f $(ls &plg;/&plugin;*.t[xg]z 2>/dev/null | grep -v '&version;')
 rm -f &reg;/&plugin;
 rm -f /etc/rc.d/rc.cpuload
-# Remove this script
 rm -f /tmp/plugin-install
 
 # Append new entries (if not existing)
