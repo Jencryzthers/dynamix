@@ -69,7 +69,7 @@ Save the file in `/boot/plugins` and type the below:
 
 ```
 cd /boot/plugins
-rm -f dynamix.webGui-2.2.?-noarch-bergware.plg
+rm -f dynamix.webGui-2.2.*-noarch-bergware.plg
 installplg dynamix.webGui-2.2.10-noarch-bergware.plg
 ```
 
