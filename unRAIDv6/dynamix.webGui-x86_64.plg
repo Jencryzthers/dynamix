@@ -46,8 +46,6 @@ if [ "$author" == "LimeTech" ]; then
   rm -rf /boot/config/plugins/webGui/webGui.cfg
 else
 # Remove dynamix webGui folders and files
- rm -rf /usr/local/emhttp/plugins/webGui
- rm -rf /usr/local/emhttp/plugins/dynamix
  rm -f /etc/rc.d/rc.cpuload
 fi
 </INLINE>
@@ -101,7 +99,7 @@ time="H:i"
 </FILE>
 
 <!--
-The 'plugin' file.
+The 'plugin.txz' source file.
 -->
 <FILE Name="/boot/config/plugins/&name;/dynamix.&name;-&version;-x86_64-bergware.txz" Run="upgradepkg --install-new">
 <URL>https://raw.github.com/bergware/dynamix/master/unRAIDv6/dynamix.&name;-&version;-x86_64-bergware.txz</URL>
@@ -166,7 +164,7 @@ if [ -n "$entry" ]; then
 fi
 
 # Update file access mode
-chmod 600 $(awk '/(\.htm$|\.php$|\.js$|\.page$|\.css$|\.png$|\.gif$)/ {print "/"$0}' /var/log/packages/dynamix.&name;-&version;-x86_64-bergware)
+chmod 600 $(awk '/(\.htm$|\.php$|\.js$|\.page$|\.css$|\.png$|\.plg$|\.gif$|\.md$|^LICENSE)/ {print "/"$0}' /var/log/packages/dynamix.&name;-&version;-x86_64-bergware)
 </INLINE>
 </FILE>
 
