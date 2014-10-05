@@ -26,7 +26,7 @@ The 'pre-install' script.
 <INLINE>
 author=$(/usr/local/sbin/plugin author /var/log/plugins/webGui.plg)
 if [ "$author" == "LimeTech" ]; then
-# Move the stock unRAID folders
+# Move the stock unRAID folders (brute force)
   mkdir -p /usr/local/emhttp/plugins-
   mv -f /usr/local/emhttp/plugins/dockerMan /usr/local/emhttp/plugins-
   mv -f /usr/local/emhttp/plugins/indexer /usr/local/emhttp/plugins-
