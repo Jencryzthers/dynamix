@@ -38,12 +38,8 @@ if [ "$author" == "LimeTech" ]; then
   mv -f /usr/local/emhttp/plugins/xenMan /usr/local/emhttp/plugins-
   mv -f /usr/local/emhttp/*.htm /usr/local/emhttp/plugins-
   mv -f /usr/local/emhttp/*.php /usr/local/emhttp/plugins-
-# Remove unused links
-  unlink /var/log/plugins/indexer.plg
-  unlink /var/log/plugins/sysinfo.plg
-  unlink /var/log/plugins/vendor.plg
-# Remove stock unRAID settings
-  rm -rf /boot/config/plugins/webGui/webGui.cfg
+# Rename stock unRAID settings
+  mv -f /boot/config/plugins/&name;/&name;.cfg /boot/config/plugins/&name;/&name;.cfg.old
 else
 # Remove dynamix webGui folders and files
  rm -f /etc/rc.d/rc.cpuload
@@ -173,7 +169,20 @@ The 'remove' script.
 -->
 <FILE Run="/bin/bash" Method="remove">
 <INLINE>
-# Not written yet
+# Remove downloaded plugin.txz file
+rm -f /boot/config/plugins/&name;/dynamix.&name;-&version;-x86_64-bergware.txz
+
+# Uninstall the package
+removepkg dynamix.&name;-&version;-x86_64-bergware
+
+# Restore original unRAID webGui
+mv -f /usr/local/emhttp/plugins-/*.htm /usr/local/emhttp
+mv -f /usr/local/emhttp/plugins-/*.php /usr/local/emhttp
+mv -f /usr/local/emhttp/plugins-/* /usr/local/emhttp/plugins
+rmdir /usr/local/emhttp/plugins-
+
+# Rename stock unRAID settings
+mv -f /boot/config/plugins/&name;/&name;.cfg.old /boot/config/plugins/&name;/&name;.cfg
 </INLINE>
 </FILE>
 
