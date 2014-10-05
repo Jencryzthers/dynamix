@@ -45,9 +45,10 @@ if [ "$author" == "LimeTech" ]; then
 # Remove stock unRAID settings
   rm -rf /boot/config/plugins/webGui/webGui.cfg
 else
-# Remove dynamix webGui folders
+# Remove dynamix webGui folders and files
  rm -rf /usr/local/emhttp/plugins/webGui
  rm -rf /usr/local/emhttp/plugins/dynamix
+ rm -f /etc/rc.d/rc.cpuload
 fi
 </INLINE>
 </FILE>
