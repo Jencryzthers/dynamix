@@ -35,6 +35,10 @@ if [ "$author" == "LimeTech" ]; then
   rm -rf /usr/local/emhttp/plugins/vendor
   rm -rf /usr/local/emhttp/plugins/webGui
   rm -rf /usr/local/emhttp/plugins/xenMan
+# Remove unused links
+  unlink /var/log/plugins/indexer.plg
+  unlink /var/log/plugins/sysinfo.plg
+  unlink /var/log/plugins/vendor.plg
 # Remove stock unRAID settings
   rm -rf /boot/config/plugins/webGui/webGui.cfg
 else
