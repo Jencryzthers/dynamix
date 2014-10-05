@@ -96,7 +96,7 @@ time="H:i"
 The 'plugin' file.
 -->
 <FILE Name="/boot/config/plugins/&name;/dynamix.&name;-&version;-x86_64-bergware.txz" Run="upgradepkg --install-new">
-<URL>https://raw.github.com/bergware/dynamix/master/unRAIDv6/dynamix.&name;-&version;-x86_64-1.txz</URL>
+<URL>https://raw.github.com/bergware/dynamix/master/unRAIDv6/dynamix.&name;-&version;-x86_64-bergware.txz</URL>
 </FILE>
 
 <!--
