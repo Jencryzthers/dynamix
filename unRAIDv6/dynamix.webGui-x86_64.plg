@@ -156,9 +156,6 @@ if [ -n "$entry" ]; then
   crontab $cron
   rm -f $cron
 fi
-
-# Update file access mode
-chmod 600 $(awk '/(\.htm$|\.php$|\.js$|\.page$|\.css$|\.png$|\.gif$)/ {print "/"$0}' &log;/&plugin;-&version;-x86_64-1)
 </INLINE>
 </FILE>
 
