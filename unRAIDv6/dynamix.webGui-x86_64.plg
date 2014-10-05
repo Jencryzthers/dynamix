@@ -1,0 +1,174 @@
+<?xml version='1.0' standalone='yes'?>
+
+<!DOCTYPE PLUGIN [
+<!ENTITY name      "webGui">
+<!ENTITY author    "Bergware">
+<!ENTITY version   "3.0.0">
+<!ENTITY category  "Core Functionality">
+<!ENTITY pluginURL "https://raw.github.com/bergware/dynamix/master/unRAIDv6/dynamix.webGui-x86_64.plg">
+]>
+
+<PLUGIN  name="&name;"
+         author="&author;"
+         version="&version;"
+         category="&category;"
+         pluginURL="&pluginURL;">
+
+<!--
+Copyright 2014, Bergware International
+Dynamix webGui - Enhanced graphical interface for unRAID v6
+-->
+
+<!--
+The 'pre-install' script.
+-->
+<FILE Run="/bin/bash">
+<INLINE>
+author=$(/usr/local/sbin/plugin author /var/log/plugins/webGui.plg)
+if [ "$author" == "LimeTech" ]; then
+# Wipe the stock unRAID folders (brute force)
+  rm -rf /usr/local/emhttp/plugins/dockerMan
+  rm -rf /usr/local/emhttp/plugins/indexer
+  rm -rf /usr/local/emhttp/plugins/plgMan
+  rm -rf /usr/local/emhttp/plugins/sysinfo
+  rm -rf /usr/local/emhttp/plugins/unRAIDServer
+  rm -rf /usr/local/emhttp/plugins/vendor
+  rm -rf /usr/local/emhttp/plugins/webGui
+  rm -rf /usr/local/emhttp/plugins/xenMan
+# Remove stock unRAID settings
+  rm -rf /boot/config/plugins/webGui/webGui.cfg
+else
+# Remove dynamix webGui folders
+ rm -rf /usr/local/emhttp/plugins/webGui
+ rm -rf /usr/local/emhttp/plugins/dynamix
+fi
+</INLINE>
+</FILE>
+
+<!--
+Default settings.
+-->
+<FILE Name="/boot/config/plugins/&name;/&name;.cfg">
+<INLINE>
+[confirm]
+down="1"
+stop="1"
+sleep="1"
+preclear="1"
+warn="1"
+[display]
+date="%c"
+time="%R"
+number=".,"
+unit="C"
+scale="-1"
+align="right"
+view=""
+total="1"
+spin="1"
+banner=""
+snow="0"
+icons="1"
+tabs="0"
+usage="1"
+text="0"
+theme="white"
+hot="40"
+max="50"
+refresh="1000"
+[parity]
+mode="0"
+hour="0 0"
+dotm="1"
+month="1"
+day="0"
+cron=""
+write=""
+[notify]
+path="/tmp/notifications"
+position="top-right"
+date="d-m-Y"
+time="H:i"
+</INLINE>
+</FILE>
+
+<!--
+The 'plugin' file.
+-->
+<FILE Name="/boot/config/plugins/&name;/dynamix.&name;-&version;-x86_64-bergware.txz" Run="upgradepkg --install-new">
+<URL>https://raw.github.com/bergware/dynamix/master/unRAIDv6/dynamix.&name;-&version;-x86_64-1.txz</URL>
+</FILE>
+
+<!--
+The 'rc' script. Used to start/stop the cpuload script.
+-->
+<FILE Name="/etc/rc.d/rc.cpuload" Mode="0770">
+<INLINE>
+#!/bin/sh
+program="cpuload"
+execute="/usr/local/sbin/$program"
+
+case "$1" in
+'start')
+  if [ -z "$(pidof -s -x $execute)" ]; then
+    $execute 1>/dev/null 2>&amp;1
+    echo "$program started"
+  else
+    echo "$program already running!"
+  fi
+;;
+'stop')
+  if [ -n "$(pidof -s -x $execute)" ]; then
+    pkill -f $execute 1>/dev/null 2>&amp;1
+    timer=$(($(date +%s)+5))
+    until [ -z "$(pidof -s -x $execute)" ] || [ $(($(date +%s)-timer)) -ge 0 ]; do
+      sleep 1
+    done
+    echo "$program stopped"
+  else
+    echo "$program not running!"
+  fi
+;;
+*)
+  echo "Usage: $(basename $0) start|stop"
+esac
+</INLINE>
+</FILE>
+
+<!--
+The 'post-install' script.
+-->
+<FILE Run="/bin/bash">
+<INLINE>
+cfg="/boot/config/plugins/&name;/&name;.cfg"
+echo "executing !"
+
+# Start cpu load monitoring for dashboard page
+/etc/rc.d/rc.cpuload start >/dev/null
+
+# Create cron entry (if active)
+entry=$(grep '^cron=' $cfg | cut -d'"' -f2)
+if [ -n "$entry" ]; then
+  cron=/tmp/parity.tmp
+  crontab -l | grep -vi 'Scheduled Parity Check' | grep -v '/root/mdcmd check' > $cron
+  echo '# Scheduled Parity Check' >> $cron
+  echo "$entry" | cut -d"'" -f2 >> $cron
+  crontab $cron
+  rm -f $cron
+fi
+
+# Update file access mode
+chmod 600 $(awk '/(\.htm$|\.php$|\.js$|\.page$|\.css$|\.png$|\.gif$)/ {print "/"$0}' &log;/&plugin;-&version;-x86_64-1)
+</INLINE>
+</FILE>
+
+<!--
+The 'remove' script.
+-->
+<FILE Run="/bin/bash" Method="remove">
+<INLINE>
+# Not written yet
+</INLINE>
+</FILE>
+
+</PLUGIN>
