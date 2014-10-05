@@ -26,15 +26,18 @@ The 'pre-install' script.
 <INLINE>
 author=$(/usr/local/sbin/plugin author /var/log/plugins/webGui.plg)
 if [ "$author" == "LimeTech" ]; then
-# Wipe the stock unRAID folders (brute force)
-  rm -rf /usr/local/emhttp/plugins/dockerMan
-  rm -rf /usr/local/emhttp/plugins/indexer
-  rm -rf /usr/local/emhttp/plugins/plgMan
-  rm -rf /usr/local/emhttp/plugins/sysinfo
-  rm -rf /usr/local/emhttp/plugins/unRAIDServer
-  rm -rf /usr/local/emhttp/plugins/vendor
-  rm -rf /usr/local/emhttp/plugins/webGui
-  rm -rf /usr/local/emhttp/plugins/xenMan
+# Move the stock unRAID folders
+  mkdir -p /usr/local/emhttp/plugins-
+  mv -f /usr/local/emhttp/plugins/dockerMan /usr/local/emhttp/plugins-
+  mv -f /usr/local/emhttp/plugins/indexer /usr/local/emhttp/plugins-
+  mv -f /usr/local/emhttp/plugins/plgMan /usr/local/emhttp/plugins-
+  mv -f /usr/local/emhttp/plugins/sysinfo /usr/local/emhttp/plugins-
+  mv -f /usr/local/emhttp/plugins/unRAIDServer /usr/local/emhttp/plugins-
+  mv -f /usr/local/emhttp/plugins/vendor /usr/local/emhttp/plugins-
+  mv -f /usr/local/emhttp/plugins/webGui /usr/local/emhttp/plugins-
+  mv -f /usr/local/emhttp/plugins/xenMan /usr/local/emhttp/plugins-
+  mv -f /usr/local/emhttp/*.htm /usr/local/emhttp/plugins-
+  mv -f /usr/local/emhttp/*.php /usr/local/emhttp/plugins-
 # Remove unused links
   unlink /var/log/plugins/indexer.plg
   unlink /var/log/plugins/sysinfo.plg
