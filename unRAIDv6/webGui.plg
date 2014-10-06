@@ -41,7 +41,9 @@ if [ "$author" == "LimeTech" ]; then
   mv -f /usr/local/emhttp/*.php /usr/local/emhttp/plugins-
 
 # Rename stock unRAID settings
-  mv -f /boot/config/plugins/&name;/&name;.cfg /boot/config/plugins/&name;/&name;.cfg.old
+  if [ -f /boot/config/plugins/&name;/&name;.cfg ]; then
+    mv -f /boot/config/plugins/&name;/&name;.cfg /boot/config/plugins/&name;/&name;.cfg.old
+  fi
 
 # Remove invalid symlinks
   cd /var/log/plugins
@@ -128,7 +130,7 @@ if [ -n "$entry" ]; then
 fi
 
 # Update file access mode
-chmod 600 $(awk '/(\.htm$|\.php$|\.js$|\.page$|\.css$|\.png$|\.plg$|\.gif$|\.md$|^LICENSE)/ {print "/"$0}' /var/log/packages/dynamix.&name;-&version;-x86_64-bergware)
+chmod 600 $(awk '/(\.htm$|\.php$|\.js$|\.page$|\.css$|\.png$|\.plg$|\.gif$|\.md$|^LICENSE)/ {print "/"$0}' /var/log/packages/&name;)
 
 echo ""
 echo "-----------------------------------------------------------"
@@ -161,13 +163,15 @@ mv -f /usr/local/emhttp/plugins-/* /usr/local/emhttp/plugins
 rmdir /usr/local/emhttp/plugins-
 
 # Rename stock unRAID settings
-mv -f /boot/config/plugins/&name;/&name;.cfg.old /boot/config/plugins/&name;/&name;.cfg
+if [ -f /boot/config/plugins/&name;/&name;.cfg.old ]; then
+  mv -f /boot/config/plugins/&name;/&name;.cfg.old /boot/config/plugins/&name;/&name;.cfg
+fi
 
 # Restore symlinks
 cd /var/log/plugins
 ln -sf /usr/local/emhttp/plugins/indexer/indexer.plg indexer.plg
 ln -sf /usr/local/emhttp/plugins/sysinfo/sysinfo.plg sysinfo.plg
-ln -sf /usr/local/emhttp/plugins/vendor/vendor.plg plugins/vendor.plg
+ln -sf /usr/local/emhttp/plugins/vendor/vendor.plg vendor.plg
 ln -sf /usr/local/emhttp/plugins/webGui/webGui.plg webGui.plg
 </INLINE>
 </FILE>
