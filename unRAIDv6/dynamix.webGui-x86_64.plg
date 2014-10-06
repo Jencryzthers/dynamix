@@ -146,8 +146,8 @@ The 'post-install' script.
 # Start cpu load monitoring for dashboard page
 /etc/rc.d/rc.cpuload start >/dev/null
 
-cfg="/boot/config/plugins/&name;/&name;.cfg"
 # Create cron entry (if active)
+cfg="/boot/config/plugins/&name;/&name;.cfg"
 entry=$(grep '^cron=' $cfg | cut -d'"' -f2)
 if [ -n "$entry" ]; then
   cron=/tmp/parity.tmp
