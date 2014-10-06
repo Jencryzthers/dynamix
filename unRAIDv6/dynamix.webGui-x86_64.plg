@@ -42,7 +42,7 @@ if [ "$author" == "LimeTech" ]; then
   mv -f /boot/config/plugins/&name;/&name;.cfg /boot/config/plugins/&name;/&name;.cfg.old
 else
 # Remove old plugin files
-  rm -f $(ls /boot/config/plugins/&name;/dynamix.&name;*.txz 2>/dev/null | grep -v '&version;')
+  rm -f $(ls /boot/plugins/&name;/dynamix.&name;*.txz 2>/dev/null | grep -v '&version;')
   rm -f /etc/rc.d/rc.cpuload
 fi
 </INLINE>
@@ -98,7 +98,7 @@ time="H:i"
 <!--
 The 'plugin.txz' source file.
 -->
-<FILE Name="/boot/config/plugins/&name;/dynamix.&name;-&version;-x86_64-bergware.txz" Run="upgradepkg --install-new">
+<FILE Name="/boot/plugins/&name;/dynamix.&name;-&version;-x86_64-bergware.txz" Run="upgradepkg --install-new">
 <URL>https://raw.github.com/bergware/dynamix/master/unRAIDv6/dynamix.&name;-&version;-x86_64-bergware.txz</URL>
 </FILE>
 
