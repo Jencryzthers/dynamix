@@ -47,8 +47,6 @@ The 'post-install' script.
 -->
 <FILE Run="/bin/bash">
 <INLINE>
-echo "executing !"
-
 # Copy custom sensors file
 if [ -s "/boot/config/plugins/dynamix/sensors.conf" ]; then
   cp -f /boot/config/plugins/dynamix/sensors.conf /etc/sensors.d

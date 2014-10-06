@@ -143,12 +143,10 @@ The 'post-install' script.
 -->
 <FILE Run="/bin/bash">
 <INLINE>
-cfg="/boot/config/plugins/&name;/&name;.cfg"
-echo "executing !"
-
 # Start cpu load monitoring for dashboard page
 /etc/rc.d/rc.cpuload start >/dev/null
 
+cfg="/boot/config/plugins/&name;/&name;.cfg"
 # Create cron entry (if active)
 entry=$(grep '^cron=' $cfg | cut -d'"' -f2)
 if [ -n "$entry" ]; then
