@@ -56,6 +56,15 @@ fi
 
 # Update file access mode
 chmod 600 $(awk '/(\.htm$|\.php$|\.js$|\.page$|\.css$|\.png$|\.plg$|\.gif$|\.md$|^LICENSE)/ {print "/"$0}' /var/log/packages/&name;-&version;-x86_64-bergware)
+
+echo ""
+echo "-----------------------------------------------------------"
+echo " &name; has been installed."
+echo " This plugin requires Dynamix webGui to operate"
+echo " Copyright 2014, Bergware International"
+echo " Version: &version;"
+echo "-----------------------------------------------------------"
+echo ""
 </INLINE>
 </FILE>
 

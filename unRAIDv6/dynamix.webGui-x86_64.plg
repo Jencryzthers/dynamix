@@ -162,6 +162,17 @@ fi
 
 # Update file access mode
 chmod 600 $(awk '/(\.htm$|\.php$|\.js$|\.page$|\.css$|\.png$|\.plg$|\.gif$|\.md$|^LICENSE)/ {print "/"$0}' /var/log/packages/dynamix.&name;-&version;-x86_64-bergware)
+
+echo ""
+echo "-----------------------------------------------------------"
+echo " Dynamix &name; has been installed."
+echo ""
+echo " Created by Bergware International"
+echo " Enhanced graphical interface for unRAID media server"
+echo " Copyright 2014, Bergware International"
+echo " Version: &version;"
+echo "-----------------------------------------------------------"
+echo ""
 </INLINE>
 </FILE>
 
