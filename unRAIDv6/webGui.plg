@@ -39,8 +39,10 @@ if [ "$author" == "LimeTech" ]; then
   mv -f /usr/local/emhttp/plugins/xenMan /usr/local/emhttp/plugins-
   mv -f /usr/local/emhttp/*.htm /usr/local/emhttp/plugins-
   mv -f /usr/local/emhttp/*.php /usr/local/emhttp/plugins-
+
 # Rename stock unRAID settings
   mv -f /boot/config/plugins/&name;/&name;.cfg /boot/config/plugins/&name;/&name;.cfg.old
+
 # Remove invalid symlinks
   cd /var/log/plugins
   unlink indexer.plg
@@ -146,16 +148,17 @@ The 'remove' script.
 -->
 <FILE Run="/bin/bash" Method="remove">
 <INLINE>
-# Remove downloaded file
+# Remove 'source' file
 rm -f /boot/plugins/&name;.txz
 
-# Uninstall the package
+# Uninstall this package
 removepkg &name;
 
 # Restore original unRAID webGui
 mv -f /usr/local/emhttp/plugins-/*.htm /usr/local/emhttp
 mv -f /usr/local/emhttp/plugins-/*.php /usr/local/emhttp
-mv -f /usr/local/emhttp/plugins- /usr/local/emhttp/plugins
+mv -f /usr/local/emhttp/plugins-/* /usr/local/emhttp/plugins
+rmdir /usr/local/emhttp/plugins-
 
 # Rename stock unRAID settings
 mv -f /boot/config/plugins/&name;/&name;.cfg.old /boot/config/plugins/&name;/&name;.cfg
