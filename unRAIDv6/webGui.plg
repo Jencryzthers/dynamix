@@ -12,7 +12,8 @@
          author="&author;"
          version="&version;"
          category="&category;"
-         pluginURL="&pluginURL;">
+         pluginURL="&pluginURL;"
+         plugintype="system">
 
 <!--
 Copyright 2014, Bergware International
@@ -155,8 +156,8 @@ The 'remove' script.
 # Remove 'source' file
 rm -f /boot/plugins/&name;-&version;-x86_64.txz
 
-# Uninstall this package
-removepkg &name;
+# Uninstall the 'source' package
+removepkg &name;-&version;-x86_64
 
 # Restore original unRAID webGui
 mv -f /usr/local/emhttp/plugins-/*.htm /usr/local/emhttp

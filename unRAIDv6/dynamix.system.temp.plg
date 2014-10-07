@@ -74,8 +74,8 @@ The 'remove' script.
 # Remove 'source' file
 rm -f /boot/config/plugins/dynamix/&name;-&version;-x86_64.txz
 
-# Uninstall this package
-removepkg &name;
+# Uninstall the 'source' package
+removepkg &name;-&version;-x86_64
 </INLINE>
 </FILE>
 
