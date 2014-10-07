@@ -12,8 +12,7 @@
          author="&author;"
          version="&version;"
          category="&category;"
-         pluginURL="&pluginURL;"
-         system="true">
+         pluginURL="&pluginURL;">
 
 <!--
 Copyright 2014, Bergware International
