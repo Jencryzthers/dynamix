@@ -5,7 +5,7 @@
 <!ENTITY author    "Bergware">
 <!ENTITY version   "3.0.0">
 <!ENTITY category  "Core Functionality">
-<!ENTITY pluginURL "https://raw.github.com/bergware/dynamix/master/unRAIDv6/dynamix.system.temp-x86_64.plg">
+<!ENTITY pluginURL "https://raw.github.com/bergware/dynamix/master/unRAIDv6/dynamix.system.temp.plg">
 ]>
 
 <PLUGIN  name="&name;"
@@ -27,19 +27,19 @@ The 'pre-install' script.
 author=$(/usr/local/sbin/plugin author /var/log/plugins/webGui.plg)
 if [ "$author" == "LimeTech" ]; then
 # Dynamix webGui not present
-  echo "missing Dynamix webGui plugin !!!"
+  echo "Missing Dynamix webGui plugin !!!"
   exit 1
 fi
-# Remove old plugin files
+# Remove old 'source' files
 rm -f $(ls /boot/config/plugins/dynamix/&name;*.txz 2>/dev/null | grep -v '&version;')
 </INLINE>
 </FILE>
 
 <!--
-The 'plugin.txz' source file.
+The 'source' file.
 -->
-<FILE Name="/boot/config/plugins/dynamix/&name;-&version;-x86_64-bergware.txz" Run="upgradepkg --install-new">
-<URL>https://raw.github.com/bergware/dynamix/master/unRAIDv6/&name;-&version;-x86_64-bergware.txz</URL>
+<FILE Name="/boot/config/plugins/dynamix/&name;-&version;-x86_64.txz" Run="upgradepkg --install-new">
+<URL>https://raw.github.com/bergware/dynamix/master/unRAIDv6/&name;-&version;-x86_64.txz</URL>
 </FILE>
 
 <!--
@@ -53,7 +53,7 @@ if [ -s "/boot/config/plugins/dynamix/sensors.conf" ]; then
 fi
 
 # Update file access mode
-chmod 600 $(awk '/(\.htm$|\.php$|\.js$|\.page$|\.css$|\.png$|\.plg$|\.gif$|\.md$|^LICENSE)/ {print "/"$0}' /var/log/packages/&name;-&version;-x86_64-bergware)
+chmod 600 $(awk '/(\.htm$|\.php$|\.js$|\.page$|\.css$|\.png$|\.plg$|\.gif$|\.md$|^LICENSE)/ {print "/"$0}' /var/log/packages/&name;-&version;-x86_64)
 
 echo ""
 echo "-----------------------------------------------------------"
@@ -71,11 +71,11 @@ The 'remove' script.
 -->
 <FILE Run="/bin/bash" Method="remove">
 <INLINE>
-# Remove downloaded plugin.txz file
-rm -f /boot/config/plugins/dynamix/&name;-&version;-x86_64-bergware.txz
+# Remove 'source' file
+rm -f /boot/config/plugins/dynamix/&name;-&version;-x86_64.txz
 
-# Uninstall the package
-removepkg &name;-&version;-x86_64-bergware
+# Uninstall this package
+removepkg &name;
 </INLINE>
 </FILE>
 

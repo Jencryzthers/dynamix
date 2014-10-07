@@ -51,6 +51,9 @@ if [ "$author" == "LimeTech" ]; then
   unlink sysinfo.plg
   unlink vendor.plg
   unlink webGui.plg
+else
+# Remove old 'source' files
+  rm -f $(ls /boot/plugins/&name;*.txz 2>/dev/null | grep -v '&version;')
 fi
 </INLINE>
 </FILE>
@@ -105,8 +108,8 @@ time="H:i"
 <!--
 The 'source' file.
 -->
-<FILE Name="/boot/plugins/&name;.txz" Run="upgradepkg --install-new">
-<URL>https://raw.github.com/bergware/dynamix/master/unRAIDv6/&name;.txz</URL>
+<FILE Name="/boot/plugins/&name;-&version;-x86_64.txz" Run="upgradepkg --install-new">
+<URL>https://raw.github.com/bergware/dynamix/master/unRAIDv6/&name;-&version;-x86_64.txz</URL>
 </FILE>
 
 <!--
@@ -151,7 +154,7 @@ The 'remove' script.
 <FILE Run="/bin/bash" Method="remove">
 <INLINE>
 # Remove 'source' file
-rm -f /boot/plugins/&name;.txz
+rm -f /boot/plugins/&name;-&version-x86_64.txz
 
 # Uninstall this package
 removepkg &name;
