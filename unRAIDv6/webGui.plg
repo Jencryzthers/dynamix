@@ -132,6 +132,7 @@ fi
 # Start cpu load monitoring for dashboard page
 echo -n "Starting CPU load... "
 /etc/rc.d/rc.cpuload start
+echo "!"
 
 # Update file access mode
 chmod 600 $(awk '/(\.htm$|\.php$|\.js$|\.page$|\.css$|\.png$|\.plg$|\.gif$|\.md$|^LICENSE)/ {print "/"$0}' /var/log/packages/&name;-&version;-x86_64)
@@ -157,6 +158,7 @@ The 'remove' script.
 # Stop cpu load monitoring
 echo -n "Stopping CPU load... "
 /etc/rc.d/rc.cpuload stop >/dev/null
+echo "!"
 
 # Remove 'source' file
 rm -f /boot/plugins/&name;-&version;-x86_64.txz
