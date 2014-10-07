@@ -130,9 +130,8 @@ if [ -n "$entry" ]; then
 fi
 
 # Start cpu load monitoring for dashboard page
-echo -n "Start CPU load... "
+echo -n "Starting CPU load... "
 /etc/rc.d/rc.cpuload start
-echo "started"
 
 # Update file access mode
 chmod 600 $(awk '/(\.htm$|\.php$|\.js$|\.page$|\.css$|\.png$|\.plg$|\.gif$|\.md$|^LICENSE)/ {print "/"$0}' /var/log/packages/&name;-&version;-x86_64)
@@ -156,6 +155,7 @@ The 'remove' script.
 <FILE Run="/bin/bash" Method="remove">
 <INLINE>
 # Stop cpu load monitoring
+echo -n "Stopping CPU load... "
 /etc/rc.d/rc.cpuload stop >/dev/null
 
 # Remove 'source' file
