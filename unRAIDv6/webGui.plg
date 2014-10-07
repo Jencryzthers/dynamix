@@ -130,7 +130,7 @@ if [ -n "$entry" ]; then
 fi
 
 # Start cpu load monitoring for dashboard page
-nohup /etc/rc.d/rc.cpuload start >/dev/null
+/etc/rc.d/rc.cpuload start
 
 # Update file access mode
 chmod 600 $(awk '/(\.htm$|\.php$|\.js$|\.page$|\.css$|\.png$|\.plg$|\.gif$|\.md$|^LICENSE)/ {print "/"$0}' /var/log/packages/&name;-&version;-x86_64)
