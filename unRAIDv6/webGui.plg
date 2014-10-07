@@ -117,9 +117,6 @@ The 'post-install' script.
 -->
 <FILE Run="/bin/bash">
 <INLINE>
-# Start cpu load monitoring for dashboard page
-/etc/rc.d/rc.cpuload start >/dev/null
-
 # Create cron entry (if active)
 cfg="/boot/config/plugins/&name;/&name;.cfg"
 entry=$(grep '^cron=' $cfg | cut -d'"' -f2)
@@ -131,6 +128,9 @@ if [ -n "$entry" ]; then
   crontab $cron
   rm -f $cron
 fi
+
+# Start cpu load monitoring for dashboard page
+nohup /etc/rc.d/rc.cpuload start >/dev/null
 
 # Update file access mode
 chmod 600 $(awk '/(\.htm$|\.php$|\.js$|\.page$|\.css$|\.png$|\.plg$|\.gif$|\.md$|^LICENSE)/ {print "/"$0}' /var/log/packages/&name;-&version;-x86_64)
