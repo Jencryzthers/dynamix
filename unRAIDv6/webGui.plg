@@ -153,6 +153,9 @@ The 'remove' script.
 -->
 <FILE Run="/bin/bash" Method="remove">
 <INLINE>
+# Stop cpu load monitoring
+/etc/rc.d/rc.cpuload stop >/dev/null
+
 # Remove 'source' file
 rm -f /boot/plugins/&name;-&version;-x86_64.txz
 
