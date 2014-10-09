@@ -45,7 +45,7 @@ if [ "$author" == "LimeTech" ]; then
     mv -f /boot/config/plugins/&name;/&name;.cfg /boot/config/plugins/&name;/&name;.cfg.old
   fi
 
-# Remove invalid symlinks
+# Remove invalidated symlinks
   cd /var/log/plugins
   unlink indexer.plg
   unlink sysinfo.plg
@@ -132,6 +132,11 @@ fi
 # Start cpu load monitoring for dashboard page
 /etc/rc.d/rc.cpuload start
 
+# Update symlinks
+cd /usr/local/sbin
+ln -sf /usr/local/emhttp/plugins/plgMan/scripts/plugin plugin
+ln -sf /usr/local/emhttp/plugins/xenMan/scripts/xenman xenman
+
 # Update file access mode
 chmod 600 $(awk '/(\.htm$|\.php$|\.js$|\.page$|\.css$|\.png$|\.plg$|\.gif$|\.md$|^LICENSE)/ {print "/"$0}' /var/log/packages/&name;-&version;-x86_64)
 
@@ -180,6 +185,10 @@ ln -sf /usr/local/emhttp/plugins/indexer/indexer.plg indexer.plg
 ln -sf /usr/local/emhttp/plugins/sysinfo/sysinfo.plg sysinfo.plg
 ln -sf /usr/local/emhttp/plugins/vendor/vendor.plg vendor.plg
 ln -sf /usr/local/emhttp/plugins/webGui/webGui.plg webGui.plg
+
+cd /usr/local/sbin
+ln -sf /usr/local/emhttp/plugins/plgMan/plugin plugin
+ln -sf /usr/local/emhttp/plugins/xenMan/xenman xenman
 </INLINE>
 </FILE>
 
