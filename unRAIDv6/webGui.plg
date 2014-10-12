@@ -66,8 +66,6 @@ Default settings.
 [confirm]
 down="1"
 stop="1"
-sleep="1"
-preclear="1"
 warn="1"
 [display]
 date="%c"
