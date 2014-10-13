@@ -97,6 +97,12 @@ rm -f /boot/config/plugins/dynamix/&name;-&version;-x86_64.txz
 rm -f /boot/config/plugins/dynamix/&name;.cfg
 rm -f /tmp/plugins/&name;.plg
 
+# Remove cron entry
+cron=/tmp/sa1.tmp
+crontab -l | grep -v '# System data' | grep -v '/sa/sa1' > $cron
+crontab $cron
+rm -f $cron
+
 # Uninstall the 'source' package
 removepkg &name;-&version;-x86_64
 </INLINE>
