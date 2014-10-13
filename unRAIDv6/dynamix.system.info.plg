@@ -1,0 +1,78 @@
+<?xml version='1.0' standalone='yes'?>
+
+<!DOCTYPE PLUGIN [
+<!ENTITY name      "dynamix.system.info">
+<!ENTITY author    "Bergware">
+<!ENTITY version   "3.0.0">
+<!ENTITY category  "Core Functionality">
+<!ENTITY pluginURL "https://raw.github.com/bergware/dynamix/master/unRAIDv6/dynamix.system.info.plg">
+]>
+
+<PLUGIN  name="&name;"
+         author="&author;"
+         version="&version;"
+         category="&category;"
+         pluginURL="&pluginURL;">
+
+<!--
+Copyright 2014, Bergware International
+Dynamix System Information - System hardware and BIOS details
+-->
+
+<!--
+The 'pre-install' script.
+-->
+<FILE Run="/bin/bash">
+<INLINE>
+author=$(/usr/local/sbin/plugin author /var/log/plugins/webGui.plg)
+if [ "$author" == "LimeTech" ]; then
+# Dynamix webGui not present
+  echo "Missing Dynamix webGui plugin !!!"
+  exit 1
+fi
+# Remove old 'source' files
+rm -f $(ls /boot/config/plugins/dynamix/&name;*.txz 2>/dev/null | grep -v '&version;')
+</INLINE>
+</FILE>
+
+<!--
+The 'source' file.
+-->
+<FILE Name="/boot/config/plugins/dynamix/&name;-&version;-x86_64.txz" Run="upgradepkg --install-new">
+<URL>https://raw.github.com/bergware/dynamix/master/unRAIDv6/&name;-&version;-x86_64.txz</URL>
+</FILE>
+
+<!--
+The 'post-install' script.
+-->
+<FILE Run="/bin/bash">
+<INLINE>
+# Update file access mode
+chmod 600 $(awk '/(\.htm$|\.php$|\.js$|\.page$|\.css$|\.png$|\.plg$|\.gif$|\.md$|^LICENSE)/ {print "/"$0}' /var/log/packages/&name;-&version;-x86_64)
+
+echo ""
+echo "-----------------------------------------------------------"
+echo " &name; has been installed."
+echo " This plugin requires Dynamix webGui to operate"
+echo " Copyright 2014, Bergware International"
+echo " Version: &version;"
+echo "-----------------------------------------------------------"
+echo ""
+</INLINE>
+</FILE>
+
+<!--
+The 'remove' script.
+-->
+<FILE Run="/bin/bash" Method="remove">
+<INLINE>
+# Remove plugin related files
+rm -f /boot/config/plugins/dynamix/&name;-&version;-x86_64.txz
+rm -f /tmp/plugins/&name;.plg
+
+# Uninstall the 'source' package
+removepkg &name;-&version;-x86_64
+</INLINE>
+</FILE>
+
+</PLUGIN>
