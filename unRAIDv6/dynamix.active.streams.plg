@@ -1,11 +1,11 @@
 <?xml version='1.0' standalone='yes'?>
 
 <!DOCTYPE PLUGIN [
-<!ENTITY name      "dynamix.system.stats">
+<!ENTITY name      "dynamix.active.streams">
 <!ENTITY author    "Bergware">
 <!ENTITY version   "3.0.0">
 <!ENTITY category  "Core Functionality">
-<!ENTITY pluginURL "https://raw.github.com/bergware/dynamix/master/unRAIDv6/dynamix.system.stats.plg">
+<!ENTITY pluginURL "https://raw.github.com/bergware/dynamix/master/unRAIDv6/dynamix.active.streams.plg">
 ]>
 
 <PLUGIN  name="&name;"
@@ -16,7 +16,7 @@
 
 <!--
 Copyright 2014, Bergware International
-Dynamix System Stats - disk and system usage graphs
+Dynamix Active Streams - Real-time monitoring of SMB shares
 -->
 
 <!--
@@ -36,20 +36,10 @@ rm -f $(ls /boot/config/plugins/dynamix/&name;*.txz 2>/dev/null | grep -v '&vers
 </FILE>
 
 <!--
-Default settings.
+Default settings (empty file).
 -->
 <FILE Name="/boot/config/plugins/dynamix/&name;.cfg">
 <INLINE>
-critical="90"
-warning="70"
-text="right"
-cols="1"
-show="cpu,ram,com,hdd"
-size="1"
-port="eth0"
-unit="b"
-graph="0"
-frame="150"
 </INLINE>
 </FILE>
 
@@ -65,14 +55,6 @@ The 'post-install' script.
 -->
 <FILE Run="/bin/bash">
 <INLINE>
-# Create cron entry
-cron=/tmp/sa1.tmp
-crontab -l | grep -v '# System data' | grep -v '/sa/sa1' > $cron
-echo '# System data collection - poll every minute' >> $cron
-echo '*/1 * * * * /usr/lib/sa/sa1 1 1 &amp; 1>/dev/null 2>&amp;1' >> $cron
-crontab $cron
-rm -f $cron
-
 # Update file access mode
 chmod 600 $(awk '/(\.htm$|\.php$|\.js$|\.page$|\.css$|\.png$|\.plg$|\.gif$|\.md$|^LICENSE)/ {print "/"$0}' /var/log/packages/&name;-&version;-x86_64)
 
@@ -96,12 +78,6 @@ The 'remove' script.
 rm -f /boot/config/plugins/dynamix/&name;-&version;-x86_64.txz
 rm -f /boot/config/plugins/dynamix/&name;.cfg
 rm -f /tmp/plugins/&name;.plg
-
-# Remove cron entry
-cron=/tmp/sa1.tmp
-crontab -l | grep -v '# System data' | grep -v '/sa/sa1' > $cron
-crontab $cron
-rm -f $cron
 
 # Uninstall the 'source' package
 removepkg &name;-&version;-x86_64
