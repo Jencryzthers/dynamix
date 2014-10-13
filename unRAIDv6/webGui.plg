@@ -41,8 +41,8 @@ if [ "$author" == "LimeTech" ]; then
   mv -f /usr/local/emhttp/*.php /usr/local/emhttp/plugins-
 
 # Rename stock unRAID settings
-  if [ -f /boot/config/plugins/&name;/&name;.cfg ]; then
-    mv -f /boot/config/plugins/&name;/&name;.cfg /boot/config/plugins/&name;/&name;.cfg.old
+  if [ -f /boot/config/plugins/webGui/&name;.cfg ]; then
+    mv -f /boot/config/plugins/webGui/&name;.cfg /boot/config/plugins/webGui/&name;.cfg.old
   fi
 
 # Remove invalidated symlinks
@@ -53,7 +53,7 @@ if [ "$author" == "LimeTech" ]; then
   unlink webGui.plg
 else
 # Remove old 'source' files
-  rm -f $(ls /boot/plugins/&name;*.txz 2>/dev/null | grep -v '&version;')
+  rm -f $(ls /boot/config/plugins/&name;*.txz 2>/dev/null | grep -v '&version;')
 fi
 </INLINE>
 </FILE>
@@ -61,7 +61,7 @@ fi
 <!--
 Default settings.
 -->
-<FILE Name="/boot/config/plugins/&name;/&name;.cfg">
+<FILE Name="/boot/config/plugins/webGui/&name;.cfg">
 <INLINE>
 [confirm]
 down="1"
@@ -106,7 +106,7 @@ time="H:i"
 <!--
 The 'source' file.
 -->
-<FILE Name="/boot/plugins/&name;-&version;-x86_64.txz" Run="upgradepkg --install-new">
+<FILE Name="/boot/config/plugins/&name;-&version;-x86_64.txz" Run="upgradepkg --install-new">
 <URL>https://raw.github.com/bergware/dynamix/master/unRAIDv6/&name;-&version;-x86_64.txz</URL>
 </FILE>
 
@@ -160,7 +160,7 @@ The 'remove' script.
 /etc/rc.d/rc.cpuload stop
 
 # Remove 'source' file
-rm -f /boot/plugins/&name;-&version;-x86_64.txz
+rm -f /boot/config/plugins/&name;-&version;-x86_64.txz
 rm -f /tmp/plugins/&name;.plg
 
 # Uninstall the 'source' package
@@ -173,8 +173,8 @@ mv -f /usr/local/emhttp/plugins-/* /usr/local/emhttp/plugins
 rmdir /usr/local/emhttp/plugins-
 
 # Rename stock unRAID settings
-if [ -f /boot/config/plugins/&name;/&name;.cfg.old ]; then
-  mv -f /boot/config/plugins/&name;/&name;.cfg.old /boot/config/plugins/&name;/&name;.cfg
+if [ -f /boot/config/plugins/webGui/&name;.cfg.old ]; then
+  mv -f /boot/config/plugins/webGui/&name;.cfg.old /boot/config/plugins/webGui/&name;.cfg
 fi
 
 # Restore symlinks
