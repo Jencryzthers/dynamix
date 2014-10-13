@@ -159,7 +159,7 @@ The 'remove' script.
 # Stop cpu load monitoring
 /etc/rc.d/rc.cpuload stop
 
-# Remove 'source' file
+# Remove plugin related files
 rm -f /boot/config/plugins/&name;-&version;-x86_64.txz
 rm -f /tmp/plugins/&name;.plg
 

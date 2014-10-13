@@ -92,8 +92,9 @@ The 'remove' script.
 -->
 <FILE Run="/bin/bash" Method="remove">
 <INLINE>
-# Remove 'source' file
+# Remove plugin related files
 rm -f /boot/config/plugins/dynamix/&name;-&version;-x86_64.txz
+rm -f /boot/config/plugins/dynamix/&name;.cfg
 rm -f /tmp/plugins/&name;.plg
 
 # Uninstall the 'source' package
