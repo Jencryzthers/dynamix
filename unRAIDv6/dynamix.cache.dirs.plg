@@ -64,7 +64,6 @@ Workaround to get background process started
 <INLINE>
 #!/bin/bash
 /etc/rc.d/rc.cachedirs start >/dev/null
-rm -f /tmp/start_service
 </INLINE>
 </FILE>
 
@@ -89,9 +88,8 @@ fi
 # enable=$(grep "^service=" /boot/config/plugins/dynamix/&name;.cfg|cut -d'"' -f2)
 if [ "$enable" == "1" ]; then
   at -f /tmp/start_service now
-else
-  rm -f /tmp/start_service
 fi
+rm -f /tmp/start_service
 
 # Update file access mode
 chmod 600 $(awk '/(\.htm$|\.php$|\.js$|\.page$|\.css$|\.png$|\.plg$|\.gif$|\.md$|^LICENSE)/ {print "/"$0}' /var/log/packages/&name;-&version;-x86_64)

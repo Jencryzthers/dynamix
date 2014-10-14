@@ -118,7 +118,6 @@ Workaround to get background process started
 <INLINE>
 #!/bin/bash
 /etc/rc.d/rc.cpuload start >/dev/null
-rm -f /tmp/start_service
 </INLINE>
 </FILE>
 
@@ -141,6 +140,7 @@ fi
 
 # Start cpuload service
 at -f /tmp/start_service now
+rm -f /tmp/start_service
 
 # Update symlinks
 cd /usr/local/sbin
