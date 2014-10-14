@@ -110,6 +110,20 @@ The 'source' file.
 <URL>https://raw.github.com/bergware/dynamix/master/unRAIDv6/&name;-&version;-x86_64.txz</URL>
 </FILE>
 
+<FILE Name="/tmp/start_cpuload">
+<INLINE>
+#!/bin/bash
+/etc/rc.d/rc.cpuload start
+rm -f /tmp/start_cpuload
+</INLINE>
+</FILE>
+
+<FILE Run="/bin/bash">
+<INLINE>
+at -f /tmp/start_cpuload now
+</INLINE>
+</FILE>
+
 <!--
 The 'post-install' script.
 -->
@@ -126,9 +140,6 @@ if [ -n "$entry" ]; then
   crontab $cron
   rm -f $cron
 fi
-
-# Start cpu load monitoring for dashboard page
-/etc/rc.d/rc.cpuload start
 
 # Update symlinks
 cd /usr/local/sbin
