@@ -75,7 +75,7 @@ fi
 
 # Start service
 enable=$(grep "^service=" /boot/config/plugins/dynamix/&name;.cfg|cut -d'"' -f2)
-if [ "$enable" == "1" ]; then
+if [ "$enable" == "2" ]; then
   /etc/rc.d/rc.cachedirs start >/dev/null
 fi
 
