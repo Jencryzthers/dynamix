@@ -89,6 +89,8 @@ fi
 # enable=$(grep "^service=" /boot/config/plugins/dynamix/&name;.cfg|cut -d'"' -f2)
 if [ "$enable" == "1" ]; then
   at -f /tmp/start_service now
+else
+  rm -f /tmp/start_service
 fi
 
 # Update file access mode
