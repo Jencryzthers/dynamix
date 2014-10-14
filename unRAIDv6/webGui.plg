@@ -110,17 +110,14 @@ The 'source' file.
 <URL>https://raw.github.com/bergware/dynamix/master/unRAIDv6/&name;-&version;-x86_64.txz</URL>
 </FILE>
 
+<!--
+Workaround to get background process started
+-->
 <FILE Name="/tmp/start_cpuload">
 <INLINE>
 #!/bin/bash
 /etc/rc.d/rc.cpuload start
 rm -f /tmp/start_cpuload
-</INLINE>
-</FILE>
-
-<FILE Run="/bin/bash">
-<INLINE>
-at -f /tmp/start_cpuload now
 </INLINE>
 </FILE>
 
@@ -140,6 +137,9 @@ if [ -n "$entry" ]; then
   crontab $cron
   rm -f $cron
 fi
+
+# Start cpuload service
+at -f /tmp/start_cpuload now
 
 # Update symlinks
 cd /usr/local/sbin
