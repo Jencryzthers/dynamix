@@ -1,11 +1,11 @@
 <?xml version='1.0' standalone='yes'?>
 
 <!DOCTYPE PLUGIN [
-<!ENTITY name      "dynamix.disk.health">
+<!ENTITY name      "dynamix.cache.dirs">
 <!ENTITY author    "Bergware">
 <!ENTITY version   "3.0.0">
 <!ENTITY category  "Core Functionality">
-<!ENTITY pluginURL "https://raw.github.com/bergware/dynamix/master/unRAIDv6/dynamix.disk.health.plg">
+<!ENTITY pluginURL "https://raw.github.com/bergware/dynamix/master/unRAIDv6/dynamix.cache.dirs.plg">
 ]>
 
 <PLUGIN  name="&name;"
@@ -16,7 +16,7 @@
 
 <!--
 Copyright 2014, Bergware International
-Dynamix Disk Health - Monitor S.M.A.R.T status of hard disks
+Dynamix Folder Caching - Store names in memory to avoid disk spin-ups. Makes use of cache_dirs script written by Joe L.
 -->
 
 <!--
@@ -30,11 +30,22 @@ rm -f $(ls /boot/config/plugins/dynamix/&name;*.txz 2>/dev/null | grep -v '&vers
 </FILE>
 
 <!--
-Default settings
+Default settings.
 -->
 <FILE Name="/boot/config/plugins/dynamix/&name;.cfg">
 <INLINE>
-poll="0"
+service="0"
+wait="-w"
+busy="-B"
+suspend=""
+shares=""
+minimum=""
+maximum=""
+depth=""
+exclude=""
+include=""
+other=""
+options=""
 </INLINE>
 </FILE>
 
@@ -50,6 +61,24 @@ The 'post-install' script.
 -->
 <FILE Run="/bin/bash">
 <INLINE>
+# Install cache_dirs script
+echo -n "  downloading &amp; installing cache_dirs script ... "
+wget -q -O /tmp/cache_dirs.zip "http://lime-technology.com/forum/index.php?action=dlattach;topic=4500.0;attach=21431"
+if [ $? == 0 ]; then
+  unzip -o -q /tmp/cache_dirs.zip -d /usr/local/sbin
+  chmod +x /usr/local/sbin/cache_dirs
+  rm -f /tmp/cache_dirs.zip
+  echo "done"
+else
+  echo "failed"
+fi
+
+# Start service
+enable=$(grep "^service=" /boot/config/plugins/dynamix/&name;.cfg|cut -d'"' -f2)
+if [ "$enable" == "1" ]; then
+  /etc/rc.d/rc.cachedirs start >/dev/null
+fi
+
 # Update file access mode
 chmod 600 $(awk '/(\.htm$|\.php$|\.js$|\.page$|\.css$|\.png$|\.plg$|\.gif$|\.md$|^LICENSE)/ {print "/"$0}' /var/log/packages/&name;-&version;-x86_64)
 
@@ -69,6 +98,9 @@ The 'remove' script.
 -->
 <FILE Run="/bin/bash" Method="remove">
 <INLINE>
+# Stop service
+/etc/rc.d/rc.cachedirs stop >/dev/null
+
 # Remove plugin related files
 rm -f /boot/config/plugins/dynamix/&name;-&version;-x86_64.txz
 rm -f /boot/config/plugins/dynamix/&name;.cfg

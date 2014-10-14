@@ -24,12 +24,6 @@ The 'pre-install' script.
 -->
 <FILE Run="/bin/bash">
 <INLINE>
-author=$(/usr/local/sbin/plugin author /var/log/plugins/webGui.plg)
-if [ "$author" == "LimeTech" ]; then
-# Dynamix webGui not present
-  echo "Missing Dynamix webGui plugin !!!"
-  exit 1
-fi
 # Remove old 'source' files
 rm -f $(ls /boot/config/plugins/dynamix/&name;*.txz 2>/dev/null | grep -v '&version;')
 </INLINE>
