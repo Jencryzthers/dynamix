@@ -26,6 +26,7 @@ The 'pre-install' script.
 <INLINE>
 # Remove old 'source' files
 rm -f $(ls /boot/config/plugins/dynamix/&name;*.txz 2>/dev/null | grep -v '&version;')
+rm -f /tmp/start_service
 </INLINE>
 </FILE>
 
@@ -59,11 +60,11 @@ The 'source' file.
 <!--
 Workaround to get background process started
 -->
-<FILE Name="/tmp/start_cachedirs">
+<FILE Name="/tmp/start_service">
 <INLINE>
 #!/bin/bash
 /etc/rc.d/rc.cachedirs start
-rm -f /tmp/start_cachedirs
+rm -f /tmp/start_service
 </INLINE>
 </FILE>
 
@@ -87,7 +88,7 @@ fi
 # Start service
 # enable=$(grep "^service=" /boot/config/plugins/dynamix/&name;.cfg|cut -d'"' -f2)
 if [ "$enable" == "1" ]; then
-  at -f /tmp/start_cachedirs now
+  at -f /tmp/start_service now
 fi
 
 # Update file access mode
