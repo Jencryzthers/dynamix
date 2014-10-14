@@ -62,7 +62,7 @@ Workaround to get background process started
 <FILE Name="/tmp/start_cachedirs">
 <INLINE>
 #!/bin/bash
-/etc/rc.d/rc.cache_dirs start
+/etc/rc.d/rc.cachedirs start
 rm -f /tmp/start_cachedirs
 </INLINE>
 </FILE>
