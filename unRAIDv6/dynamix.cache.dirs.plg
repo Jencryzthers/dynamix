@@ -63,7 +63,7 @@ Workaround to get background process started
 <FILE Name="/tmp/start_service">
 <INLINE>
 #!/bin/bash
-/etc/rc.d/rc.cachedirs start 1>/dev/null 2>&amp;1
+/etc/rc.d/rc.cachedirs start >/dev/null
 rm -f /tmp/start_service
 </INLINE>
 </FILE>
