@@ -179,10 +179,9 @@ rm -f /tmp/plugins/&name;.plg
 removepkg &name;-&version;-x86_64
 
 # Restore original unRAID webGui
-mv -f /usr/local/emhttp/plugins-/*.htm /usr/local/emhttp
-mv -f /usr/local/emhttp/plugins-/*.php /usr/local/emhttp
-mv -f /usr/local/emhttp/plugins-/* /usr/local/emhttp/plugins
-rmdir /usr/local/emhttp/plugins-
+mv -f /usr/local/emhttp/plugins-/*.[hp][th][mp] /usr/local/emhttp
+cp -r /usr/local/emhttp/plugins- /usr/local/emhttp/plugins
+rm -r /usr/local/emhttp/plugins-
 
 # Rename stock unRAID settings
 if [ -f /boot/config/plugins/webGui/&name;.cfg.old ]; then
