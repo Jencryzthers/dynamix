@@ -41,7 +41,7 @@ if [ "$author" == "LimeTech" ]; then
   mv -f /usr/local/emhttp/update.php /usr/local/emhttp/plugins-
 
 # Rename stock unRAID settings
-  if [ -f /boot/config/plugins/webGui/&name;.cfg ] && [ ! -f /boot/config/plugins/webGui/&name;.cfg.old ]; then
+  if [ -f /boot/config/plugins/webGui/&name;.cfg ] &amp;&amp; [ ! -f /boot/config/plugins/webGui/&name;.cfg.old ]; then
     mv -f /boot/config/plugins/webGui/&name;.cfg /boot/config/plugins/webGui/&name;.cfg.old
   fi
 
