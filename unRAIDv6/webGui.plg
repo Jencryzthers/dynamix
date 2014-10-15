@@ -54,7 +54,6 @@ if [ "$author" == "LimeTech" ]; then
 else
 # Remove old 'source' files
   rm -f $(ls /boot/config/plugins/&name;*.txz 2>/dev/null | grep -v '&version;')
-  rm -f /tmp/start_service
 fi
 </INLINE>
 </FILE>
@@ -112,16 +111,6 @@ The 'source' file.
 </FILE>
 
 <!--
-Workaround to get background process started
--->
-<FILE Name="/tmp/start_service">
-<INLINE>
-#!/bin/bash
-/etc/rc.d/rc.cpuload start >/dev/null
-</INLINE>
-</FILE>
-
-<!--
 The 'post-install' script.
 -->
 <FILE Run="/bin/bash">
@@ -139,8 +128,7 @@ if [ -n "$entry" ]; then
 fi
 
 # Start cpuload service
-at -f /tmp/start_service now
-rm -f /tmp/start_service
+setsid /etc/rc.d/rc.cpuload start >/dev/null
 
 # Update symlinks
 cd /usr/local/sbin

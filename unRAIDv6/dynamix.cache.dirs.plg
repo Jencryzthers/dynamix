@@ -26,7 +26,6 @@ The 'pre-install' script.
 <INLINE>
 # Remove old 'source' files
 rm -f $(ls /boot/config/plugins/dynamix/&name;*.txz 2>/dev/null | grep -v '&version;')
-rm -f /tmp/start_service
 </INLINE>
 </FILE>
 
