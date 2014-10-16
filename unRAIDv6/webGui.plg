@@ -30,6 +30,12 @@ if [ -f /boot/config/plugins/webGui/&name;.cfg.limetech  ]; then
   rm -f $(ls /boot/config/plugins/webGui/&name;*.txz 2>/dev/null | grep -v '&version;')
   rm -f /tmp/start_service
 else
+# Rename limetech settings file
+  if [ -f /boot/config/plugins/webGui/&name;.cfg ]
+    mv -f /boot/config/plugins/webGui/&name;.cfg /boot/config/plugins/webGui/&name;.cfg.limetech
+  fi
+fi
+if [ ! -f /usr/local/emhttp/plugins- ]; then
 # Move limetech unRAID folders (brute force)
   mkdir -p /usr/local/emhttp/plugins-
   mv -f /usr/local/emhttp/plugins/dockerMan /usr/local/emhttp/plugins-
@@ -42,10 +48,6 @@ else
   mv -f /usr/local/emhttp/plugins/xenMan /usr/local/emhttp/plugins-
   mv -f /usr/local/emhttp/*.htm /usr/local/emhttp/plugins-
   mv -f /usr/local/emhttp/update.php /usr/local/emhttp/plugins-
-# Rename limetech settings file
-  if [ -f /boot/config/plugins/webGui/&name;.cfg ]
-    mv -f /boot/config/plugins/webGui/&name;.cfg /boot/config/plugins/webGui/&name;.cfg.limetech
-  fi
 # Remove invalidated symlinks
   cd /var/log/plugins
   unlink indexer.plg
