@@ -35,7 +35,7 @@ else
     mv -f /boot/config/plugins/webGui/&name;.cfg /boot/config/plugins/webGui/&name;.cfg.limetech
   fi
 fi
-if [ ! -f /usr/local/emhttp/plugins- ]; then
+if [ ! -d /usr/local/emhttp/plugins- ]; then
   # Move limetech unRAID folders (brute force)
   mkdir -p /usr/local/emhttp/plugins-
   mv -f /usr/local/emhttp/plugins/dockerMan /usr/local/emhttp/plugins-
