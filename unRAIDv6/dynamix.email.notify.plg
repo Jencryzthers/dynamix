@@ -122,7 +122,7 @@ The 'remove' script.
 <FILE Run="/bin/bash" Method="remove">
 <INLINE>
 # Stop service
-/etc/rc.d/rc.emailnotify stop >/dev/null
+/etc/rc.d/rc.emailnotify stop
 
 # Remove plugin related files
 rm -f /boot/config/plugins/dynamix/&name;-&version;-x86_64.txz
