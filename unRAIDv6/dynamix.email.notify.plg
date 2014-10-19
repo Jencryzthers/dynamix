@@ -96,7 +96,7 @@ create 'ssmtp' '/etc/ssmtp_config.conf'
 create 'alias' '/etc/ssmtp_revaliases.conf'
 
 # Start service
-# enable=$(grep "^service=" $cfg | cut -d'"' -f2)
+enable=$(grep "^service=" $cfg | cut -d'"' -f2)
 if [ "$enable" == "1" ]; then
   at -f /tmp/start_service now 2>/dev/null
 fi
