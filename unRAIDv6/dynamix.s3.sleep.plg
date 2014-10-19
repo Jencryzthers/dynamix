@@ -33,7 +33,7 @@ add_key(){
 }
 
 # Add sleep button setting
-add_key 'sleep="0"' 'confirm' '/boot/config/plugins/webGui/webGui.cfg'
+add_key 'sleep="1"' 'confirm' '/boot/config/plugins/webGui/webGui.cfg'
 
 # Stop service
 /etc/rc.d/rc.s3sleep stop 2>/dev/null
