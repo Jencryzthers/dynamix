@@ -24,6 +24,17 @@ The 'pre-install' script.
 -->
 <FILE Run="/bin/bash">
 <INLINE>
+add_key(){
+  key=$(echo $1|cut -d'=' -f1)
+  if [ $(sed -n "/^\[$2\]/,/^\[/p" $3|grep "^$key="|wc -l) -eq 0 ]; then
+    row=$(sed -n "/^\[$2\]/,/^\[/=" $3|tail -1)
+    sed -i "$row i $1" $3
+  fi
+}
+
+# Add sysinfo setting
+add_key 'sysinfo="1"' 'display' '/boot/config/plugins/webGui/webGui.cfg'
+
 # Remove old 'source' files
 rm -f $(ls /boot/config/plugins/dynamix/&name;*.txz 2>/dev/null | grep -v '&version;')
 </INLINE>
@@ -60,6 +71,9 @@ The 'remove' script.
 -->
 <FILE Run="/bin/bash" Method="remove">
 <INLINE>
+# Delete sysinfo setting
+sed -i '/^sysinfo=/d' /boot/config/plugins/webGui/webGui.cfg
+
 # Remove plugin related files
 rm -f /boot/config/plugins/dynamix/&name;-&version;-x86_64.txz
 rm -f /tmp/plugins/&name;.plg
