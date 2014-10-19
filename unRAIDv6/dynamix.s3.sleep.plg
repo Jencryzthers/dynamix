@@ -24,6 +24,17 @@ The 'pre-install' script.
 -->
 <FILE Run="/bin/bash">
 <INLINE>
+add_key(){
+  key=$(echo $1|cut -d'=' -f1)
+  if [ $(sed -n "/^\[$2\]/,/^\[/p" $3|grep "^$key="|wc -l) -eq 0 ]; then
+    row=$(sed -n "/^\[$2\]/,/^\[/=" $3|tail -1)
+    sed -i "$row i $1" $3
+  fi
+}
+
+# Add sleep button setting
+add_key 'sleep="0"' 'confirm' '/boot/config/plugins/webGui/webGui.cfg'
+
 # Stop service
 /etc/rc.d/rc.s3sleep stop 2>/dev/null
 
@@ -111,6 +122,9 @@ The 'remove' script.
 -->
 <FILE Run="/bin/bash" Method="remove">
 <INLINE>
+# Delete sleep button setting
+sed -i '/^sleep=/d' /boot/config/plugins/webGui/webGui.cfg
+
 # Stop service
 /etc/rc.d/rc.s3sleep stop
 
