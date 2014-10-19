@@ -87,7 +87,7 @@ fi
 # Start service
 # enable=$(grep "^service=" /boot/config/plugins/dynamix/&name;.cfg|cut -d'"' -f2)
 if [ "$enable" == "1" ]; then
-  at -f /tmp/start_service now
+  at -f /tmp/start_service now 2>/dev/null
 fi
 rm -f /tmp/start_service
 

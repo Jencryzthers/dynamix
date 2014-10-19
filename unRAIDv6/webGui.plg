@@ -138,7 +138,7 @@ if [ -n "$entry" ]; then
 fi
 
 # Start cpuload service
-at -f /tmp/start_service now
+at -f /tmp/start_service now 2>/dev/null
 rm -f /tmp/start_service
 
 # Update symlinks
