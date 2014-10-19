@@ -32,8 +32,9 @@ add_key(){
   fi
 }
 
-# Add sleep button setting
+# Add sleep settings
 add_key 'sleep="1"' 'confirm' '/boot/config/plugins/webGui/webGui.cfg'
+add_key 'sleep="plugins/dynamix.s3.sleep/Sleep.php"' 'display' '/boot/config/plugins/webGui/webGui.cfg'
 
 # Stop service
 /etc/rc.d/rc.s3sleep stop 2>/dev/null
@@ -122,7 +123,7 @@ The 'remove' script.
 -->
 <FILE Run="/bin/bash" Method="remove">
 <INLINE>
-# Delete sleep button setting
+# Delete sleep settings
 sed -i '/^sleep=/d' /boot/config/plugins/webGui/webGui.cfg
 
 # Stop service
