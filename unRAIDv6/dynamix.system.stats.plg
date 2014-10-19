@@ -61,9 +61,9 @@ The 'post-install' script.
 <INLINE>
 # Create cron entry
 cron=/tmp/sa1.tmp
-crontab -l | grep -v '# System data' | grep -v '/sa/sa1' > $cron
-echo '# System data collection - poll every minute' >> $cron
-echo '*/1 * * * * /usr/lib/sa/sa1 1 1 &amp; 1>/dev/null 2>&amp;1' >> $cron
+crontab -l | grep -v '# System data' | grep -v '/sa/sa1' >$cron
+echo '# System data collection - poll every minute' >>$cron
+echo '*/1 * * * * /usr/lib/sa/sa1 1 1 &amp; 1>/dev/null 2>&amp;1' >>$cron
 crontab $cron
 rm -f $cron
 

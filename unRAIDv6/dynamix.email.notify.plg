@@ -1,11 +1,11 @@
 <?xml version='1.0' standalone='yes'?>
 
 <!DOCTYPE PLUGIN [
-<!ENTITY name      "dynamix.cache.dirs">
+<!ENTITY name      "dynamix.email.notify">
 <!ENTITY author    "Bergware">
 <!ENTITY version   "3.0.0">
 <!ENTITY category  "Core Functionality">
-<!ENTITY pluginURL "https://raw.github.com/bergware/dynamix/master/unRAIDv6/dynamix.cache.dirs.plg">
+<!ENTITY pluginURL "https://raw.github.com/bergware/dynamix/master/unRAIDv6/dynamix.email.notify.plg">
 ]>
 
 <PLUGIN  name="&name;"
@@ -16,7 +16,7 @@
 
 <!--
 Copyright 2014, Bergware International
-Dynamix Folder Caching - Store names in memory to avoid disk spin-ups. Makes use of cache_dirs script written by Joe L.
+Dynamix Email Notification - Automatic email reporting on critical conditions
 -->
 
 <!--
@@ -25,7 +25,7 @@ The 'pre-install' script.
 <FILE Run="/bin/bash">
 <INLINE>
 # Stop service
-/etc/rc.d/rc.cachedirs stop 2>/dev/null
+/etc/rc.d/rc.emailnotify stop 2>/dev/null
 
 # Remove old 'source' files
 rm -f $(ls /boot/config/plugins/dynamix/&name;*.txz 2>/dev/null | grep -v '&version;')
@@ -38,18 +38,10 @@ Default settings.
 -->
 <FILE Name="/boot/config/plugins/dynamix/&name;.cfg">
 <INLINE>
+[email]
 service="0"
-wait="-w"
-busy="-B"
-suspend=""
-shares=""
-minimum=""
-maximum=""
-depth=""
-exclude=""
-include=""
-other=""
-options=""
+[ssmtp]
+[alias]
 </INLINE>
 </FILE>
 
@@ -66,7 +58,7 @@ Workaround to start service
 <FILE Name="/tmp/start_service">
 <INLINE>
 #!/bin/bash
-/etc/rc.d/rc.cachedirs start
+/etc/rc.d/rc.emailnotify start
 </INLINE>
 </FILE>
 
@@ -76,18 +68,32 @@ The 'post-install' script.
 <FILE Run="/bin/bash">
 <INLINE>
 cfg="/boot/config/plugins/dynamix/&name;.cfg"
+tmp="/tmp/create.tmp"
 
-# Install cache_dirs script
-echo -n "  downloading &amp; installing cache_dirs script ... "
-wget -q -O /tmp/cache_dirs.zip "http://lime-technology.com/forum/index.php?action=dlattach;topic=4500.0;attach=21431"
-if [ $? == 0 ]; then
-  unzip -o -q /tmp/cache_dirs.zip -d /usr/local/sbin
-  chmod +x /usr/local/sbin/cache_dirs
-  rm -f /tmp/cache_dirs.zip
-  echo "done"
-else
-  echo "failed"
-fi
+create(){
+  sed -n "/^\[$1\]/,/^\[/p" $cfg | grep -v '^\[' > $tmp
+  while read line; do
+    key=$(echo $line | cut -d'=' -f1)
+    val=$(echo $line | cut -d'"' -f2)
+    if [ $(expr index "$val" /) -eq 0 ]; then
+      sed -i "s/^$key=.*/$key=$val/" $2
+    else
+      sed -i "s:^$key=.*:$key=$val:" $2
+    fi
+  done &lt;$tmp
+  rm -f $tmp
+}
+
+# SSMTP symlinks
+rm -f /etc/ssmtp/ssmtp.*
+ln -sf /etc/ssmtp_config.conf /etc/ssmtp/ssmtp.conf
+rm -f /etc/ssmtp/revaliases.*
+ln -sf /etc/ssmtp_revaliases.conf /etc/ssmtp/revaliases.conf
+
+# Create configuration files
+create 'email' '/etc/unraid_notify.conf'
+create 'ssmtp' '/etc/ssmtp_config.conf'
+create 'alias' '/etc/ssmtp_revaliases.conf'
 
 # Start service
 # enable=$(grep "^service=" $cfg | cut -d'"' -f2)
@@ -116,7 +122,7 @@ The 'remove' script.
 <FILE Run="/bin/bash" Method="remove">
 <INLINE>
 # Stop service
-/etc/rc.d/rc.cachedirs stop
+/etc/rc.d/rc.emailnotify stop >/dev/null
 
 # Remove plugin related files
 rm -f /boot/config/plugins/dynamix/&name;-&version;-x86_64.txz
@@ -125,6 +131,10 @@ rm -f /tmp/plugins/&name;.plg
 
 # Uninstall the 'source' package
 removepkg &name;-&version;-x86_64
+
+# Remove symlinks
+unlink /etc/ssmtp/ssmtp.conf
+unlink /etc/ssmtp/revaliases.conf
 </INLINE>
 </FILE>
 

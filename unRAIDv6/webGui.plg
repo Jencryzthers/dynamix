@@ -25,14 +25,16 @@ The 'pre-install' script.
 -->
 <FILE Run="/bin/bash">
 <INLINE>
-if [ -f /boot/config/plugins/webGui/&name;.cfg.limetech ]; then
+cfg="/boot/config/plugins/webGui/&name;.cfg"
+
+if [ -f $cfg.limetech ]; then
   # Remove old 'source' files
   rm -f $(ls /boot/config/plugins/webGui/&name;*.txz 2>/dev/null | grep -v '&version;')
   rm -f /tmp/start_service
 else
   # Rename limetech settings file
-  if [ -f /boot/config/plugins/webGui/&name;.cfg ]; then
-    mv -f /boot/config/plugins/webGui/&name;.cfg /boot/config/plugins/webGui/&name;.cfg.limetech
+  if [ -f $cfg ]; then
+    mv -f $cfg $cfg.limetech
   fi
 fi
 if [ ! -d /usr/local/emhttp/plugins- ]; then
@@ -49,11 +51,10 @@ if [ ! -d /usr/local/emhttp/plugins- ]; then
   mv -f /usr/local/emhttp/*.htm /usr/local/emhttp/plugins-
   mv -f /usr/local/emhttp/update.php /usr/local/emhttp/plugins-
   # Remove invalidated symlinks
-  cd /var/log/plugins
-  unlink indexer.plg
-  unlink sysinfo.plg
-  unlink vendor.plg
-  unlink webGui.plg
+  unlink /var/log/plugins/indexer.plg
+  unlink /var/log/plugins/sysinfo.plg
+  unlink /var/log/plugins/vendor.plg
+  unlink /var/log/plugins/webGui.plg
 fi
 </INLINE>
 </FILE>
@@ -111,7 +112,7 @@ The 'source' file.
 </FILE>
 
 <!--
-Workaround to get background process started
+Workaround to start service
 -->
 <FILE Name="/tmp/start_service">
 <INLINE>
@@ -125,14 +126,15 @@ The 'post-install' script.
 -->
 <FILE Run="/bin/bash">
 <INLINE>
-# Create cron entry (if active)
 cfg="/boot/config/plugins/webGui/&name;.cfg"
+
+# Create cron entry (if active)
 entry=$(grep '^cron=' $cfg | cut -d'"' -f2)
 if [ -n "$entry" ]; then
   cron=/tmp/parity.tmp
-  crontab -l | grep -vi 'Scheduled Parity Check' | grep -v '/root/mdcmd check' > $cron
-  echo '# Scheduled Parity Check' >> $cron
-  echo "$entry" | cut -d"'" -f2 >> $cron
+  crontab -l | grep -vi 'Scheduled Parity Check' | grep -v '/root/mdcmd check' >$cron
+  echo '# Scheduled Parity Check' >>$cron
+  echo "$entry" | cut -d"'" -f2 >>$cron
   crontab $cron
   rm -f $cron
 fi
@@ -142,9 +144,8 @@ at -f /tmp/start_service now 2>/dev/null
 rm -f /tmp/start_service
 
 # Update symlinks
-cd /usr/local/sbin
-ln -sf /usr/local/emhttp/plugins/plgMan/scripts/plugin plugin
-ln -sf /usr/local/emhttp/plugins/xenMan/scripts/xenman xenman
+ln -sf /usr/local/emhttp/plugins/plgMan/scripts/plugin /usr/local/sbin/plugin
+ln -sf /usr/local/emhttp/plugins/xenMan/scripts/xenman /usr/local/sbin/xenman
 
 # Update file access mode
 chmod 600 $(awk '/(\.htm$|\.php$|\.js$|\.page$|\.css$|\.png$|\.plg$|\.gif$|\.md$|^LICENSE)/ {print "/"$0}' /var/log/packages/&name;-&version;-x86_64)
@@ -167,7 +168,7 @@ The 'remove' script.
 -->
 <FILE Run="/bin/bash" Method="remove">
 <INLINE>
-# Stop cpu load monitoring
+# Stop service
 /etc/rc.d/rc.cpuload stop
 
 # Remove plugin related files
@@ -188,14 +189,12 @@ if [ -f /boot/config/plugins/webGui/&name;.cfg.limetech ]; then
 fi
 
 # Restore symlinks
-cd /var/log/plugins
-ln -sf /usr/local/emhttp/plugins/indexer/indexer.plg indexer.plg
-ln -sf /usr/local/emhttp/plugins/sysinfo/sysinfo.plg sysinfo.plg
-ln -sf /usr/local/emhttp/plugins/vendor/vendor.plg vendor.plg
-ln -sf /usr/local/emhttp/plugins/webGui/webGui.plg webGui.plg
-cd /usr/local/sbin
-ln -sf /usr/local/emhttp/plugins/plgMan/plugin plugin
-ln -sf /usr/local/emhttp/plugins/xenMan/xenman xenman
+ln -sf /usr/local/emhttp/plugins/indexer/indexer.plg /var/log/plugins/indexer.plg
+ln -sf /usr/local/emhttp/plugins/sysinfo/sysinfo.plg /var/log/plugins/sysinfo.plg
+ln -sf /usr/local/emhttp/plugins/vendor/vendor.plg /var/log/plugins/vendor.plg
+ln -sf /usr/local/emhttp/plugins/webGui/webGui.plg /var/log/plugins/webGui.plg
+ln -sf /usr/local/emhttp/plugins/plgMan/plugin /usr/local/sbin/plugin
+ln -sf /usr/local/emhttp/plugins/xenMan/xenman /usr/local/sbin/xenman
 </INLINE>
 </FILE>
 
