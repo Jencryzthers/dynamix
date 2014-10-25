@@ -40,8 +40,33 @@ Default settings.
 <INLINE>
 [email]
 service="0"
+RcptTo="useremail@gmail.com"
+ErrorRcptTo="useremail@gmail.com"
+Subject="unRAID Status Report"
+MailFrom="useremail@gmail.com"
+AppendStatus="True"
+SetEmailPriority="True"
+IncludeMdcmd="True"
+DisplayFahrenheit="False"
+MaxDiskTemp="45"
+CriticalDiskTemp="55"
+CriticalDiskCommand="powerdown"
+NotifyDelay="60"
+RescanDelay="60"
+StartScanDelay="60"
+NoReportIfAllSpunDown="False"
 [ssmtp]
-[alias]
+root="username@gmail.com"
+mailhub="smtp.gmail.com:465"
+rewriteDomain=""
+FromLineOverride="YES"
+UseTLS="YES"
+UseSTARTTLS="NO"
+UseTLSCert="NO"
+TLSCert=""
+AuthMethod="login"
+AuthUser="username"
+AuthPass="12345"
 </INLINE>
 </FILE>
 
@@ -84,16 +109,9 @@ create(){
   rm -f $tmp
 }
 
-# SSMTP symlinks
-rm -f /etc/ssmtp/ssmtp.*
-ln -sf /etc/ssmtp_config.conf /etc/ssmtp/ssmtp.conf
-rm -f /etc/ssmtp/revaliases.*
-ln -sf /etc/ssmtp_revaliases.conf /etc/ssmtp/revaliases.conf
-
 # Create configuration files
-create 'email' '/etc/unraid_notify.conf'
-create 'ssmtp' '/etc/ssmtp_config.conf'
-create 'alias' '/etc/ssmtp_revaliases.conf'
+create 'email' '/etc/ssmtp/notify.conf'
+create 'ssmtp' '/etc/ssmtp/ssmtp.conf'
 
 # Start service
 enable=$(grep "^service=" $cfg | cut -d'"' -f2)
