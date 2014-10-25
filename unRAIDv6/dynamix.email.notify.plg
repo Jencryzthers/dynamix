@@ -40,10 +40,10 @@ Default settings.
 <INLINE>
 [email]
 service="0"
-RcptTo="useremail@gmail.com"
-ErrorRcptTo="useremail@gmail.com"
+RcptTo="useremail.gmail.com"
+ErrorRcptTo="useremail.gmail.com"
 Subject="unRAID Status Report"
-MailFrom="useremail@gmail.com"
+MailFrom="useremail.gmail.com"
 AppendStatus="True"
 SetEmailPriority="True"
 IncludeMdcmd="True"
@@ -56,7 +56,7 @@ RescanDelay="60"
 StartScanDelay="60"
 NoReportIfAllSpunDown="False"
 [ssmtp]
-root="username@gmail.com"
+root="username.gmail.com"
 mailhub="smtp.gmail.com:465"
 rewriteDomain=""
 FromLineOverride="YES"
