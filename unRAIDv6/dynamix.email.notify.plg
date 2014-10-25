@@ -40,10 +40,10 @@ Default settings.
 <INLINE>
 [email]
 service="0"
-RcptTo="useremail.gmail.com"
-ErrorRcptTo="useremail.gmail.com"
+RcptTo="useremail@gmail.com"
+ErrorRcptTo="useremail@gmail.com"
 Subject="unRAID Status Report"
-MailFrom="useremail.gmail.com"
+MailFrom="useremail@gmail.com"
 AppendStatus="True"
 SetEmailPriority="True"
 IncludeMdcmd="True"
@@ -56,7 +56,7 @@ RescanDelay="60"
 StartScanDelay="60"
 NoReportIfAllSpunDown="False"
 [ssmtp]
-root="username.gmail.com"
+root="username@gmail.com"
 mailhub="smtp.gmail.com:465"
 rewriteDomain=""
 FromLineOverride="YES"
@@ -149,10 +149,6 @@ rm -f /tmp/plugins/&name;.plg
 
 # Uninstall the 'source' package
 removepkg &name;-&version;-x86_64
-
-# Remove symlinks
-unlink /etc/ssmtp/ssmtp.conf
-unlink /etc/ssmtp/revaliases.conf
 </INLINE>
 </FILE>
 
