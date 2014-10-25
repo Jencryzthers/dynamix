@@ -57,7 +57,7 @@ StartScanDelay="60"
 NoReportIfAllSpunDown="False"
 [ssmtp]
 root="username@gmail.com"
-mailhub="smtp.gmail.com:465"
+mailhub="smtp.gmail.com&#58;465"
 rewriteDomain=""
 FromLineOverride="YES"
 UseTLS="YES"
@@ -93,20 +93,9 @@ The 'post-install' script.
 <FILE Run="/bin/bash">
 <INLINE>
 cfg="/boot/config/plugins/dynamix/&name;.cfg"
-tmp="/tmp/create.tmp"
 
 create(){
-  sed -n "/^\[$1\]/,/^\[/p" $cfg | grep -v '^\[' > $tmp
-  while read line; do
-    key=$(echo $line | cut -d'=' -f1)
-    val=$(echo $line | cut -d'"' -f2)
-    if [ $(expr index "$val" /) -eq 0 ]; then
-      sed -i "s/^$key=.*/$key=$val/" $2
-    else
-      sed -i "s:^$key=.*:$key=$val:" $2
-    fi
-  done &lt;$tmp
-  rm -f $tmp
+  sed -n "/^\[$1\]/,/^\[/p" $cfg | grep -v '^\[' > $2
 }
 
 # Create configuration files
